@@ -1,0 +1,1109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Teacher Dashboard - Class Roots</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/teacher.css" />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="index.html">
+          <i class="bi bi-mortarboard-fill me-2"></i>Class Roots
+        </a>
+        <div class="navbar-nav ms-auto">
+          <span class="navbar-text me-3">
+            <i class="bi bi-person-circle me-1"></i>Welcome, Sarah Johnson
+          </span>
+          <a class="btn btn-outline-light btn-sm" href="index.html">
+            <i class="bi bi-box-arrow-right me-1"></i>Logout
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 sidebar bg-light p-0">
+          <div class="p-3">
+            <h5 class="text-primary mb-3">Teacher Dashboard</h5>
+            <ul class="nav nav-pills flex-column">
+              <li class="nav-item mb-2">
+                <button class="nav-link w-100 text-start active" data-tab="classes">
+                  <i class="bi bi-collection me-2"></i>My Classes
+                </button>
+              </li>
+              <li class="nav-item mb-2">
+                <button class="nav-link w-100 text-start" data-tab="parent-communication">
+                  <i class="bi bi-chat-dots me-2"></i>Parent Communication
+                </button>
+              </li>
+              <li class="nav-item mb-2">
+                <button class="nav-link w-100 text-start" data-tab="announcements">
+                  <i class="bi bi-megaphone me-2"></i>Announcements
+                </button>
+              </li>
+              <li class="nav-item mb-2">
+                <button class="nav-link w-100 text-start" data-tab="reports">
+                  <i class="bi bi-graph-up me-2"></i>Reports
+                </button>
+              </li>
+              <li class="nav-item mb-2">
+                <button class="nav-link w-100 text-start" data-tab="settings">
+                  <i class="bi bi-gear me-2"></i>Settings
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-md-9 col-lg-10 main-content">
+          <!-- Classes Tab -->
+          <div id="classes-tab" class="tab-content active">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h2 class="h3 mb-0">My Classes</h2>
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addClassModal">
+                <i class="bi bi-plus-circle me-1"></i>Add Class
+              </button>
+            </div>
+
+            <!-- Classes Grid -->
+            <div class="row" id="classes-grid">
+              <!-- Class cards will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Class Detail View -->
+          <div id="class-detail" class="tab-content" style="display: none;">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <button class="btn btn-outline-secondary me-3" onclick="showClassesTab()">
+                  <i class="bi bi-arrow-left me-1"></i>Back to Classes
+                </button>
+                <h2 class="h3 mb-0 d-inline" id="class-detail-title">Class Name</h2>
+              </div>
+              <div>
+                <button class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#addStudentModal">
+                  <i class="bi bi-person-plus me-1"></i>Add Student
+                </button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addGradeModal">
+                  <i class="bi bi-plus-circle me-1"></i>Add Grade
+                </button>
+              </div>
+            </div>
+
+            <!-- Class Tabs -->
+            <ul class="nav nav-tabs mb-4" id="classTabs">
+              <li class="nav-item">
+                <button class="nav-link active" data-tab="students">
+                  <i class="bi bi-people me-1"></i>Students
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-tab="grading">
+                  <i class="bi bi-journal-text me-1"></i>Grading Center
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-tab="attendance">
+                  <i class="bi bi-calendar-check me-1"></i>Attendance
+                </button>
+              </li>
+            </ul>
+
+            <!-- Students Tab -->
+            <div id="students-tab" class="tab-content active">
+              <div class="row">
+                <div class="col-lg-8">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Student Roster</h5>
+                      <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="exportStudentList()">
+                          <i class="bi bi-download me-1"></i>Export
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="printStudentList()">
+                          <i class="bi bi-printer me-1"></i>Print
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body p-0">
+                      <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                          <thead class="table-light">
+                            <tr>
+                              <th>Student Name</th>
+                              <th>Grade Level</th>
+                              <th>Parent Contact</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="students-table">
+                            <!-- Students will be populated by JavaScript -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0">Student Forms</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="list-group list-group-flush">
+                        <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#medicalFormsModal">
+                          <i class="bi bi-heart-pulse me-2"></i>Medical Information
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#allergiesModal">
+                          <i class="bi bi-exclamation-triangle me-2"></i>Allergies & Medications
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#fieldTripsModal">
+                          <i class="bi bi-bus-front me-2"></i>Field Trip Permissions
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#emergencyContactsModal">
+                          <i class="bi bi-telephone me-2"></i>Emergency Contacts
+                        </a>
+                        <a href="#" class="list-group-item list-group-item-action" data-bs-toggle="modal" data-bs-target="#behaviorNotesModal">
+                          <i class="bi bi-clipboard-data me-2"></i>Behavior Notes
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Grading Center Tab -->
+            <div id="grading-tab" class="tab-content">
+              <div class="row">
+                <div class="col-lg-8">
+                  <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                      <h5 class="mb-0">Assignment Grades</h5>
+                      <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="exportGrades()">
+                          <i class="bi bi-download me-1"></i>Export
+                        </button>
+                        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#gradingScaleModal">
+                          <i class="bi bi-sliders me-1"></i>Grading Scale
+                        </button>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <div class="row mb-3">
+                        <div class="col-md-6">
+                          <select class="form-select" id="assignmentFilter">
+                            <option value="">All Assignments</option>
+                            <option value="Homework">Homework</option>
+                            <option value="Quiz">Quiz</option>
+                            <option value="Test">Test</option>
+                            <option value="Project">Project</option>
+                          </select>
+                        </div>
+                        <div class="col-md-6">
+                          <input type="text" class="form-control" placeholder="Search students..." id="studentSearch">
+                        </div>
+                      </div>
+                      <div class="table-responsive">
+                        <table class="table table-hover">
+                          <thead class="table-light">
+                            <tr>
+                              <th>Student</th>
+                              <th>Assignment</th>
+                              <th>Type</th>
+                              <th>Points</th>
+                              <th>Grade</th>
+                              <th>Date</th>
+                              <th>Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody id="grades-table">
+                            <!-- Grades will be populated by JavaScript -->
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0">Grade Summary</h5>
+                    </div>
+                    <div class="card-body">
+                      <div id="grade-summary">
+                        <!-- Grade summary will be populated by JavaScript -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attendance Tab -->
+            <div id="attendance-tab" class="tab-content">
+              <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0">Attendance Records</h5>
+                  <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#attendanceModal">
+                    <i class="bi bi-plus-circle me-1"></i>Mark Attendance
+                  </button>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead class="table-light">
+                        <tr>
+                          <th>Date</th>
+                          <th>Student</th>
+                          <th>Status</th>
+                          <th>Notes</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="attendance-table">
+                        <!-- Attendance will be populated by JavaScript -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Parent Communication Tab -->
+          <div id="parent-communication-tab" class="tab-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h2 class="h3 mb-0">Parent Communication</h2>
+              <div class="btn-group">
+                <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#automatedMessageModal">
+                  <i class="bi bi-robot me-1"></i>Automated Messages
+                </button>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#sendMessageModal">
+                  <i class="bi bi-send me-1"></i>Send Message
+                </button>
+              </div>
+            </div>
+
+            <!-- Communication Overview Cards -->
+            <div class="row mb-4">
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-ticket text-primary fs-1 mb-2"></i>
+                    <h5 class="card-title">Open Tickets</h5>
+                    <h3 class="text-primary" id="open-tickets-count">5</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-file-earmark-text text-success fs-1 mb-2"></i>
+                    <h5 class="card-title">New Forms</h5>
+                    <h3 class="text-success" id="new-forms-count">3</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-envelope text-info fs-1 mb-2"></i>
+                    <h5 class="card-title">Messages Sent</h5>
+                    <h3 class="text-info" id="messages-sent-count">12</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-clock text-warning fs-1 mb-2"></i>
+                    <h5 class="card-title">Pending Replies</h5>
+                    <h3 class="text-warning" id="pending-replies-count">2</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Communication Tabs -->
+            <ul class="nav nav-tabs mb-4" id="communicationTabs">
+              <li class="nav-item">
+                <button class="nav-link active" data-tab="parent-tickets">
+                  <i class="bi bi-ticket me-1"></i>Parent Tickets
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-tab="parent-forms">
+                  <i class="bi bi-file-earmark-text me-1"></i>Parent Forms
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-tab="automated-messages">
+                  <i class="bi bi-robot me-1"></i>Automated Messages
+                </button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" data-tab="message-history">
+                  <i class="bi bi-chat-left-text me-1"></i>Message History
+                </button>
+              </li>
+            </ul>
+
+            <!-- Parent Tickets Tab -->
+            <div id="parent-tickets-tab" class="tab-content active">
+              <div class="row mb-3">
+                <div class="col-md-4">
+                  <select class="form-select" id="ticketClassFilter">
+                    <option value="">All Classes</option>
+                    <option value="Grade 3 Math">Grade 3 Math</option>
+                    <option value="Grade 4 Math">Grade 4 Math</option>
+                    <option value="Grade 5 Math">Grade 5 Math</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <select class="form-select" id="ticketStatusFilter">
+                    <option value="">All Status</option>
+                    <option value="Open">Open</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Closed">Closed</option>
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <input type="text" class="form-control" placeholder="Search tickets..." id="ticketSearch">
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-body p-0">
+                  <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                      <thead class="table-light">
+                        <tr>
+                          <th>Ticket #</th>
+                          <th>Parent</th>
+                          <th>Student</th>
+                          <th>Class</th>
+                          <th>Subject</th>
+                          <th>Status</th>
+                          <th>Priority</th>
+                          <th>Date</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="tickets-table">
+                        <!-- Tickets will be populated by JavaScript -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Parent Forms Tab -->
+            <div id="parent-forms-tab" class="tab-content">
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <select class="form-select" id="formClassFilter">
+                    <option value="">All Classes</option>
+                    <option value="Grade 3 Math">Grade 3 Math</option>
+                    <option value="Grade 4 Math">Grade 4 Math</option>
+                    <option value="Grade 5 Math">Grade 5 Math</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <select class="form-select" id="formTypeFilter">
+                    <option value="">All Form Types</option>
+                    <option value="Medical">Medical Information</option>
+                    <option value="Emergency">Emergency Contact</option>
+                    <option value="Field Trip">Field Trip Permission</option>
+                    <option value="Behavior">Behavior Update</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row" id="parent-forms-grid">
+                <!-- Forms will be populated by JavaScript -->
+              </div>
+            </div>
+
+            <!-- Automated Messages Tab -->
+            <div id="automated-messages-tab" class="tab-content">
+              <div class="row">
+                <div class="col-lg-8">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0">Automated Message Rules</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="list-group list-group-flush">
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                          <div>
+                            <h6 class="mb-1">Absence Notification</h6>
+                            <p class="mb-1 text-muted">Send message when student is marked absent</p>
+                          </div>
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="absenceRule" checked>
+                          </div>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                          <div>
+                            <h6 class="mb-1">Missing Homework</h6>
+                            <p class="mb-1 text-muted">Send message when homework is not submitted on time</p>
+                          </div>
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="homeworkRule" checked>
+                          </div>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                          <div>
+                            <h6 class="mb-1">Low Grade Alert</h6>
+                            <p class="mb-1 text-muted">Send message when student receives grade below 70%</p>
+                          </div>
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="lowGradeRule">
+                          </div>
+                        </div>
+                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                          <div>
+                            <h6 class="mb-1">Behavior Concern</h6>
+                            <p class="mb-1 text-muted">Send message when behavior score is below 3</p>
+                          </div>
+                          <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="behaviorRule">
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="card">
+                    <div class="card-header">
+                      <h5 class="mb-0">Message Templates</h5>
+                    </div>
+                    <div class="card-body">
+                      <div class="d-grid gap-2">
+                        <button class="btn btn-outline-primary" onclick="editTemplate('absence')">
+                          <i class="bi bi-pencil me-1"></i>Edit Absence Template
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="editTemplate('homework')">
+                          <i class="bi bi-pencil me-1"></i>Edit Homework Template
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="editTemplate('lowGrade')">
+                          <i class="bi bi-pencil me-1"></i>Edit Low Grade Template
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="editTemplate('behavior')">
+                          <i class="bi bi-pencil me-1"></i>Edit Behavior Template
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Message History Tab -->
+            <div id="message-history-tab" class="tab-content">
+              <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                  <h5 class="mb-0">Message History</h5>
+                  <div class="btn-group btn-group-sm">
+                    <button class="btn btn-outline-primary" onclick="exportMessages()">
+                      <i class="bi bi-download me-1"></i>Export
+                    </button>
+                    <button class="btn btn-outline-secondary" onclick="clearOldMessages()">
+                      <i class="bi bi-trash me-1"></i>Clear Old
+                    </button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <div class="table-responsive">
+                    <table class="table table-hover">
+                      <thead class="table-light">
+                        <tr>
+                          <th>Date</th>
+                          <th>Recipient</th>
+                          <th>Student</th>
+                          <th>Type</th>
+                          <th>Subject</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="message-history-table">
+                        <!-- Message history will be populated by JavaScript -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Announcements Tab -->
+          <div id="announcements-tab" class="tab-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h2 class="h3 mb-0">Announcements</h2>
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newAnnouncementModal">
+                <i class="bi bi-plus-circle me-1"></i>New Announcement
+              </button>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-8">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Recent Announcements</h5>
+                  </div>
+                  <div class="card-body">
+                    <div id="announcements-list">
+                      <!-- Announcements will be populated by JavaScript -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-grid gap-2">
+                      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#emailBlastModal">
+                        <i class="bi bi-envelope me-2"></i>Email Blast
+                      </button>
+                      <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#notificationModal">
+                        <i class="bi bi-bell me-2"></i>Send Notification
+                      </button>
+                      <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#reminderModal">
+                        <i class="bi bi-clock me-2"></i>Set Reminder
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reports Tab -->
+          <div id="reports-tab" class="tab-content">
+            <h2 class="h3 mb-4">Reports</h2>
+            <div class="row">
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100">
+                  <div class="card-body text-center">
+                    <i class="bi bi-graph-up text-primary fs-1 mb-3"></i>
+                    <h5 class="card-title">Grade Reports</h5>
+                    <p class="card-text">Generate detailed grade reports for students and classes.</p>
+                    <button class="btn btn-primary" onclick="generateGradeReport()">Generate</button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100">
+                  <div class="card-body text-center">
+                    <i class="bi bi-calendar-check text-success fs-1 mb-3"></i>
+                    <h5 class="card-title">Attendance Reports</h5>
+                    <p class="card-text">View attendance patterns and generate reports.</p>
+                    <button class="btn btn-success" onclick="generateAttendanceReport()">Generate</button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-4 mb-3">
+                <div class="card h-100">
+                  <div class="card-body text-center">
+                    <i class="bi bi-people text-info fs-1 mb-3"></i>
+                    <h5 class="card-title">Student Progress</h5>
+                    <p class="card-text">Track individual student progress over time.</p>
+                    <button class="btn btn-info" onclick="generateProgressReport()">Generate</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Tab -->
+          <div id="settings-tab" class="tab-content">
+            <h2 class="h3 mb-4">Settings</h2>
+            <div class="row">
+              <div class="col-lg-8">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Profile Settings</h5>
+                  </div>
+                  <div class="card-body">
+                    <form id="profileForm">
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label for="firstName" class="form-label">First Name</label>
+                          <input type="text" class="form-control" id="firstName" value="Sarah">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label for="lastName" class="form-label">Last Name</label>
+                          <input type="text" class="form-control" id="lastName" value="Johnson">
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" value="sarah.johnson@classroots.edu">
+                      </div>
+                      <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="phone" value="555-0101">
+                      </div>
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Class Modal -->
+    <div class="modal fade" id="addClassModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add New Class</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="addClassForm">
+              <div class="mb-3">
+                <label for="className" class="form-label">Class Name</label>
+                <input type="text" class="form-control" id="className" required>
+              </div>
+              <div class="mb-3">
+                <label for="subject" class="form-label">Subject</label>
+                <input type="text" class="form-control" id="subject" required>
+              </div>
+              <div class="mb-3">
+                <label for="gradeLevel" class="form-label">Grade Level</label>
+                <select class="form-select" id="gradeLevel" required>
+                  <option value="">Select Grade</option>
+                  <option value="K">Kindergarten</option>
+                  <option value="1">1st Grade</option>
+                  <option value="2">2nd Grade</option>
+                  <option value="3">3rd Grade</option>
+                  <option value="4">4th Grade</option>
+                  <option value="5">5th Grade</option>
+                  <option value="6">6th Grade</option>
+                  <option value="7">7th Grade</option>
+                  <option value="8">8th Grade</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="roomNumber" class="form-label">Room Number</label>
+                <input type="text" class="form-control" id="roomNumber">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="addClass()">Add Class</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Grade Modal -->
+    <div class="modal fade" id="addGradeModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Add Grade</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="addGradeForm">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="assignmentName" class="form-label">Assignment Name</label>
+                  <input type="text" class="form-control" id="assignmentName" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="assignmentType" class="form-label">Assignment Type</label>
+                  <select class="form-select" id="assignmentType" required>
+                    <option value="">Select Type</option>
+                    <option value="Homework">Homework</option>
+                    <option value="Quiz">Quiz</option>
+                    <option value="Test">Test</option>
+                    <option value="Project">Project</option>
+                    <option value="Participation">Participation</option>
+                  </select>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="pointsEarned" class="form-label">Points Earned</label>
+                  <input type="number" class="form-control" id="pointsEarned" step="0.01" required>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="pointsPossible" class="form-label">Points Possible</label>
+                  <input type="number" class="form-control" id="pointsPossible" step="0.01" required>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="studentSelect" class="form-label">Student</label>
+                <select class="form-select" id="studentSelect" required>
+                  <option value="">Select Student</option>
+                  <!-- Students will be populated by JavaScript -->
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="dueDate" class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="dueDate">
+              </div>
+              <div class="mb-3">
+                <label for="teacherNotes" class="form-label">Teacher Notes</label>
+                <textarea class="form-control" id="teacherNotes" rows="3"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="addGrade()">Add Grade</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grading Scale Modal -->
+    <div class="modal fade" id="gradingScaleModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Grading Scale</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="gradingScaleForm">
+              <div class="mb-3">
+                <label class="form-label">Grade Scale (Percentage to Letter Grade)</label>
+                <div class="row">
+                  <div class="col-6">
+                    <input type="number" class="form-control mb-2" placeholder="97" value="97" readonly>
+                    <input type="number" class="form-control mb-2" placeholder="93" value="93" readonly>
+                    <input type="number" class="form-control mb-2" placeholder="90" value="90" readonly>
+                    <input type="number" class="form-control mb-2" placeholder="87" value="87" readonly>
+                    <input type="number" class="form-control mb-2" placeholder="83" value="83" readonly>
+                    <input type="number" class="form-control mb-2" placeholder="80" value="80" readonly>
+                    <input type="number" class="form-control mb-2" placeholder="77" value="77" readonly>
+                    <input type="number" class="form-control mb-2" placeholder="73" value="73" readonly>
+                    <input type="number" class="form-control mb-2" placeholder="70" value="70" readonly>
+                    <input type="number" class="form-control mb-2" placeholder="67" value="67" readonly>
+                    <input type="number" class="form-control mb-2" placeholder="63" value="63" readonly>
+                    <input type="number" class="form-control mb-2" placeholder="60" value="60" readonly>
+                  </div>
+                  <div class="col-6">
+                    <input type="text" class="form-control mb-2" placeholder="A+" value="A+" readonly>
+                    <input type="text" class="form-control mb-2" placeholder="A" value="A" readonly>
+                    <input type="text" class="form-control mb-2" placeholder="A-" value="A-" readonly>
+                    <input type="text" class="form-control mb-2" placeholder="B+" value="B+" readonly>
+                    <input type="text" class="form-control mb-2" placeholder="B" value="B" readonly>
+                    <input type="text" class="form-control mb-2" placeholder="B-" value="B-" readonly>
+                    <input type="text" class="form-control mb-2" placeholder="C+" value="C+" readonly>
+                    <input type="text" class="form-control mb-2" placeholder="C" value="C" readonly>
+                    <input type="text" class="form-control mb-2" placeholder="C-" value="C-" readonly>
+                    <input type="text" class="form-control mb-2" placeholder="D+" value="D+" readonly>
+                    <input type="text" class="form-control mb-2" placeholder="D" value="D" readonly>
+                    <input type="text" class="form-control mb-2" placeholder="D-" value="D-" readonly>
+                  </div>
+                </div>
+                <small class="text-muted">Below 60% = F</small>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="saveGradingScale()">Save Scale</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- New Announcement Modal -->
+    <div class="modal fade" id="newAnnouncementModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">New Announcement</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="newAnnouncementForm">
+              <div class="mb-3">
+                <label for="announcementTitle" class="form-label">Title</label>
+                <input type="text" class="form-control" id="announcementTitle" required>
+              </div>
+              <div class="mb-3">
+                <label for="announcementMessage" class="form-label">Message</label>
+                <textarea class="form-control" id="announcementMessage" rows="5" required></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="announcementType" class="form-label">Type</label>
+                <select class="form-select" id="announcementType" required>
+                  <option value="">Select Type</option>
+                  <option value="general">General Announcement</option>
+                  <option value="urgent">Urgent</option>
+                  <option value="reminder">Reminder</option>
+                  <option value="event">Event</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="targetAudience" class="form-label">Target Audience</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="allParents" value="allParents">
+                  <label class="form-check-label" for="allParents">All Parents</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="specificClass" value="specificClass">
+                  <label class="form-check-label" for="specificClass">Specific Class</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="specificStudents" value="specificStudents">
+                  <label class="form-check-label" for="specificStudents">Specific Students</label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="createAnnouncement()">Send Announcement</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Parent Communication Modals -->
+    <!-- Send Message Modal -->
+    <div class="modal fade" id="sendMessageModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Send Message to Parent</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="sendMessageForm">
+              <div class="row">
+                <div class="col-md-6 mb-3">
+                  <label for="messageRecipient" class="form-label">Recipient</label>
+                  <select class="form-select" id="messageRecipient" required>
+                    <option value="">Select Parent</option>
+                    <option value="all">All Parents</option>
+                    <option value="class">Specific Class</option>
+                    <option value="student">Specific Student</option>
+                  </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                  <label for="messageType" class="form-label">Message Type</label>
+                  <select class="form-select" id="messageType" required>
+                    <option value="">Select Type</option>
+                    <option value="general">General Message</option>
+                    <option value="urgent">Urgent</option>
+                    <option value="reminder">Reminder</option>
+                    <option value="update">Progress Update</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="messageSubject" class="form-label">Subject</label>
+                <input type="text" class="form-control" id="messageSubject" required>
+              </div>
+              <div class="mb-3">
+                <label for="messageContent" class="form-label">Message</label>
+                <textarea class="form-control" id="messageContent" rows="5" required></textarea>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="sendEmail" checked>
+                  <label class="form-check-label" for="sendEmail">Send Email</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="sendSMS">
+                  <label class="form-check-label" for="sendSMS">Send SMS</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="sendInApp">
+                  <label class="form-check-label" for="sendInApp">Send In-App Notification</label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="sendMessage()">Send Message</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ticket Detail Modal -->
+    <div class="modal fade" id="ticketDetailModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Ticket #<span id="ticketNumber"></span></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <strong>Parent:</strong> <span id="ticketParent"></span><br>
+                <strong>Student:</strong> <span id="ticketStudent"></span><br>
+                <strong>Class:</strong> <span id="ticketClass"></span>
+              </div>
+              <div class="col-md-6">
+                <strong>Status:</strong> <span id="ticketStatus" class="badge"></span><br>
+                <strong>Priority:</strong> <span id="ticketPriority" class="badge"></span><br>
+                <strong>Date:</strong> <span id="ticketDate"></span>
+              </div>
+            </div>
+            <div class="mb-3">
+              <strong>Subject:</strong>
+              <p id="ticketSubject" class="mt-1"></p>
+            </div>
+            <div class="mb-3">
+              <strong>Message:</strong>
+              <p id="ticketMessage" class="mt-1"></p>
+            </div>
+            <div class="mb-3">
+              <label for="ticketResponse" class="form-label">Response</label>
+              <textarea class="form-control" id="ticketResponse" rows="4" placeholder="Type your response here..."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-warning" onclick="updateTicketStatus('In Progress')">Mark In Progress</button>
+            <button type="button" class="btn btn-success" onclick="updateTicketStatus('Resolved')">Mark Resolved</button>
+            <button type="button" class="btn btn-primary" onclick="sendTicketResponse()">Send Response</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Template Modal -->
+    <div class="modal fade" id="messageTemplateModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Edit Message Template</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="messageTemplateForm">
+              <div class="mb-3">
+                <label for="templateType" class="form-label">Template Type</label>
+                <input type="text" class="form-control" id="templateType" readonly>
+              </div>
+              <div class="mb-3">
+                <label for="templateSubject" class="form-label">Subject Template</label>
+                <input type="text" class="form-control" id="templateSubject" required>
+                <small class="form-text text-muted">Use {student_name}, {parent_name}, {class_name} for variables</small>
+              </div>
+              <div class="mb-3">
+                <label for="templateMessage" class="form-label">Message Template</label>
+                <textarea class="form-control" id="templateMessage" rows="8" required></textarea>
+                <small class="form-text text-muted">Use {student_name}, {parent_name}, {class_name}, {grade}, {assignment} for variables</small>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="templateEnabled" checked>
+                  <label class="form-check-label" for="templateEnabled">Enable this template</label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="saveMessageTemplate()">Save Template</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Student Forms Modals -->
+    <div class="modal fade" id="medicalFormsModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Medical Information</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="table-responsive">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Student</th>
+                    <th>Medical Conditions</th>
+                    <th>Medications</th>
+                    <th>Last Updated</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Emma Smith</td>
+                    <td>None</td>
+                    <td>None</td>
+                    <td>2024-09-15</td>
+                    <td><button class="btn btn-sm btn-outline-primary">Edit</button></td>
+                  </tr>
+                  <tr>
+                    <td>Liam Smith</td>
+                    <td>Mild Asthma</td>
+                    <td>Inhaler (as needed)</td>
+                    <td>2024-09-10</td>
+                    <td><button class="btn btn-sm btn-outline-primary">Edit</button></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS bundle -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Custom JS -->
+    <script src="./scripts/main.js"></script>
+    <script src="./scripts/teacher.js"></script>
+  </body>
+</html>

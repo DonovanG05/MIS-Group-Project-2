@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Parent Dashboard - Class Roots</title>
+
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./styles/main.css" />
+    <link rel="stylesheet" href="./styles/parent.css" />
+  </head>
+  <body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="index.html">
+          <i class="bi bi-mortarboard-fill me-2"></i>Class Roots
+        </a>
+        <div class="navbar-nav ms-auto">
+          <span class="navbar-text me-3">
+            <i class="bi bi-person-circle me-1"></i>Welcome, John Smith
+          </span>
+          <a class="btn btn-outline-light btn-sm" href="index.html">
+            <i class="bi bi-box-arrow-right me-1"></i>Logout
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container-fluid">
+      <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 col-lg-2 sidebar bg-light p-0">
+          <div class="p-3">
+            <h5 class="text-primary mb-3">Parent Dashboard</h5>
+            <ul class="nav nav-pills flex-column">
+              <li class="nav-item mb-2">
+                <button class="nav-link w-100 text-start active" data-tab="overview">
+                  <i class="bi bi-house me-2"></i>Overview
+                </button>
+              </li>
+              <li class="nav-item mb-2">
+                <button class="nav-link w-100 text-start" data-tab="announcements">
+                  <i class="bi bi-megaphone me-2"></i>Announcements
+                </button>
+              </li>
+              <li class="nav-item mb-2">
+                <button class="nav-link w-100 text-start" data-tab="attendance">
+                  <i class="bi bi-calendar-check me-2"></i>Attendance
+                </button>
+              </li>
+              <li class="nav-item mb-2">
+                <button class="nav-link w-100 text-start" data-tab="documents">
+                  <i class="bi bi-file-earmark me-2"></i>Documents
+                </button>
+              </li>
+              <li class="nav-item mb-2">
+                <button class="nav-link w-100 text-start" data-tab="communication">
+                  <i class="bi bi-chat-dots me-2"></i>Communication
+                </button>
+              </li>
+              <li class="nav-item mb-2">
+                <button class="nav-link w-100 text-start" data-tab="settings">
+                  <i class="bi bi-gear me-2"></i>Settings
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-md-9 col-lg-10 main-content">
+          <!-- Student Selection -->
+          <div class="row mb-4">
+            <div class="col-12">
+              <div class="card">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Select Student</h5>
+                    <span class="badge bg-primary" id="selected-student-badge">Emma Smith</span>
+                  </div>
+                  <div class="row mt-3" id="student-selection">
+                    <!-- Students will be populated by JavaScript -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Overview Tab -->
+          <div id="overview-tab" class="tab-content active">
+            <div class="row mb-4">
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-book text-primary fs-1 mb-2"></i>
+                    <h5 class="card-title">Classes</h5>
+                    <h3 class="text-primary" id="overview-classes-count">2</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-calendar-check text-success fs-1 mb-2"></i>
+                    <h5 class="card-title">Attendance</h5>
+                    <h3 class="text-success" id="overview-attendance-percent">95%</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-megaphone text-info fs-1 mb-2"></i>
+                    <h5 class="card-title">New Messages</h5>
+                    <h3 class="text-info" id="overview-messages-count">3</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-file-earmark text-warning fs-1 mb-2"></i>
+                    <h5 class="card-title">Pending Docs</h5>
+                    <h3 class="text-warning" id="overview-docs-count">1</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="row">
+              <div class="col-lg-8">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Recent Activity</h5>
+                  </div>
+                  <div class="card-body">
+                    <div id="recent-activity-list">
+                      <!-- Recent activity will be populated by JavaScript -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Quick Actions</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="d-grid gap-2">
+                      <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
+                        <i class="bi bi-upload me-2"></i>Upload Document
+                      </button>
+                      <button class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#contactTeacherModal">
+                        <i class="bi bi-chat me-2"></i>Contact Teacher
+                      </button>
+                      <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#reportAbsenceModal">
+                        <i class="bi bi-calendar-x me-2"></i>Report Absence
+                      </button>
+                      <button class="btn btn-outline-warning" data-bs-toggle="modal" data-bs-target="#updateInfoModal">
+                        <i class="bi bi-pencil me-2"></i>Update Information
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Announcements Tab -->
+          <div id="announcements-tab" class="tab-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h2 class="h3 mb-0">Class Announcements</h2>
+              <div class="btn-group">
+                <button class="btn btn-outline-primary" onclick="markAllAsRead()">
+                  <i class="bi bi-check-all me-1"></i>Mark All Read
+                </button>
+                <button class="btn btn-outline-secondary" onclick="filterAnnouncements('all')">
+                  <i class="bi bi-funnel me-1"></i>Filter
+                </button>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-md-6">
+                <select class="form-select" id="announcementClassFilter">
+                  <option value="">All Classes</option>
+                  <option value="Grade 3 Math">Grade 3 Math</option>
+                  <option value="Grade 4 Math">Grade 4 Math</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <select class="form-select" id="announcementTypeFilter">
+                  <option value="">All Types</option>
+                  <option value="general">General</option>
+                  <option value="urgent">Urgent</option>
+                  <option value="reminder">Reminder</option>
+                  <option value="event">Event</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="announcements-list">
+              <!-- Announcements will be populated by JavaScript -->
+            </div>
+          </div>
+
+          <!-- Attendance Tab -->
+          <div id="attendance-tab" class="tab-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h2 class="h3 mb-0">Attendance Records</h2>
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reportAbsenceModal">
+                <i class="bi bi-plus-circle me-1"></i>Report Absence
+              </button>
+            </div>
+
+            <!-- Attendance Summary -->
+            <div class="row mb-4">
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <h5 class="card-title text-success">Present</h5>
+                    <h3 class="text-success" id="attendance-present">18</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <h5 class="card-title text-danger">Absent</h5>
+                    <h3 class="text-danger" id="attendance-absent">1</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <h5 class="card-title text-warning">Late</h5>
+                    <h3 class="text-warning" id="attendance-late">2</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <h5 class="card-title text-info">Attendance Rate</h5>
+                    <h3 class="text-info" id="attendance-rate">95%</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attendance Calendar -->
+            <div class="card">
+              <div class="card-header">
+                <h5 class="mb-0">Attendance Calendar</h5>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-hover">
+                    <thead class="table-light">
+                      <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Class</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="attendance-table">
+                      <!-- Attendance records will be populated by JavaScript -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Documents Tab -->
+          <div id="documents-tab" class="tab-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h2 class="h3 mb-0">Documents</h2>
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#uploadDocumentModal">
+                <i class="bi bi-plus-circle me-1"></i>Upload Document
+              </button>
+            </div>
+
+            <!-- Document Categories -->
+            <div class="row mb-4">
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-heart-pulse text-danger fs-1 mb-2"></i>
+                    <h5 class="card-title">Medical</h5>
+                    <h3 class="text-danger" id="medical-docs-count">3</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-exclamation-triangle text-warning fs-1 mb-2"></i>
+                    <h5 class="card-title">Allergies</h5>
+                    <h3 class="text-warning" id="allergy-docs-count">1</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-person-check text-success fs-1 mb-2"></i>
+                    <h5 class="card-title">Pickup</h5>
+                    <h3 class="text-success" id="pickup-docs-count">2</h3>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <div class="card text-center">
+                  <div class="card-body">
+                    <i class="bi bi-file-earmark text-info fs-1 mb-2"></i>
+                    <h5 class="card-title">Other</h5>
+                    <h3 class="text-info" id="other-docs-count">1</h3>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Document List -->
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Document Library</h5>
+                <div class="btn-group btn-group-sm">
+                  <button class="btn btn-outline-primary" onclick="filterDocuments('all')">All</button>
+                  <button class="btn btn-outline-danger" onclick="filterDocuments('medical')">Medical</button>
+                  <button class="btn btn-outline-warning" onclick="filterDocuments('allergy')">Allergies</button>
+                  <button class="btn btn-outline-success" onclick="filterDocuments('pickup')">Pickup</button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row" id="documents-grid">
+                  <!-- Documents will be populated by JavaScript -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Communication Tab -->
+          <div id="communication-tab" class="tab-content">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h2 class="h3 mb-0">Communication</h2>
+              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#contactTeacherModal">
+                <i class="bi bi-plus-circle me-1"></i>Contact Teacher
+              </button>
+            </div>
+
+            <div class="row">
+              <div class="col-lg-8">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Messages</h5>
+                  </div>
+                  <div class="card-body">
+                    <div id="messages-list">
+                      <!-- Messages will be populated by JavaScript -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-4">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Quick Contact</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="list-group list-group-flush">
+                      <a href="#" class="list-group-item list-group-item-action" onclick="contactTeacher('Grade 3 Math')">
+                        <i class="bi bi-person me-2"></i>Grade 3 Math Teacher
+                      </a>
+                      <a href="#" class="list-group-item list-group-item-action" onclick="contactTeacher('Grade 4 Math')">
+                        <i class="bi bi-person me-2"></i>Grade 4 Math Teacher
+                      </a>
+                      <a href="#" class="list-group-item list-group-item-action" onclick="contactPrincipal()">
+                        <i class="bi bi-person-badge me-2"></i>Principal
+                      </a>
+                      <a href="#" class="list-group-item list-group-item-action" onclick="contactOffice()">
+                        <i class="bi bi-telephone me-2"></i>School Office
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Tab -->
+          <div id="settings-tab" class="tab-content">
+            <h2 class="h3 mb-4">Settings</h2>
+            <div class="row">
+              <div class="col-lg-8">
+                <div class="card">
+                  <div class="card-header">
+                    <h5 class="mb-0">Profile Settings</h5>
+                  </div>
+                  <div class="card-body">
+                    <form id="parentProfileForm">
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label for="parentFirstName" class="form-label">First Name</label>
+                          <input type="text" class="form-control" id="parentFirstName" value="John">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label for="parentLastName" class="form-label">Last Name</label>
+                          <input type="text" class="form-control" id="parentLastName" value="Smith">
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label for="parentEmail" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="parentEmail" value="john.smith@email.com">
+                      </div>
+                      <div class="mb-3">
+                        <label for="parentPhone" class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="parentPhone" value="555-1001">
+                      </div>
+                      <div class="mb-3">
+                        <label for="parentAddress" class="form-label">Address</label>
+                        <textarea class="form-control" id="parentAddress" rows="3">100 Family Ave, Parent City, PC 54321</textarea>
+                      </div>
+                      <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Upload Document Modal -->
+    <div class="modal fade" id="uploadDocumentModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Upload Document</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="uploadDocumentForm">
+              <div class="mb-3">
+                <label for="documentType" class="form-label">Document Type</label>
+                <select class="form-select" id="documentType" required>
+                  <option value="">Select Type</option>
+                  <option value="medical">Medical Information</option>
+                  <option value="allergy">Allergy Information</option>
+                  <option value="pickup">Pickup Authorization</option>
+                  <option value="emergency">Emergency Contact</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="documentTitle" class="form-label">Document Title</label>
+                <input type="text" class="form-control" id="documentTitle" required>
+              </div>
+              <div class="mb-3">
+                <label for="documentDescription" class="form-label">Description</label>
+                <textarea class="form-control" id="documentDescription" rows="3"></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="documentFile" class="form-label">Upload File</label>
+                <input type="file" class="form-control" id="documentFile" accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" required>
+                <small class="form-text text-muted">Accepted formats: PDF, JPG, PNG, DOC, DOCX (Max 10MB)</small>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="urgentDocument">
+                  <label class="form-check-label" for="urgentDocument">Mark as urgent</label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="uploadDocument()">Upload Document</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Teacher Modal -->
+    <div class="modal fade" id="contactTeacherModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Contact Teacher</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="contactTeacherForm">
+              <div class="mb-3">
+                <label for="teacherSelect" class="form-label">Teacher</label>
+                <select class="form-select" id="teacherSelect" required>
+                  <option value="">Select Teacher</option>
+                  <option value="sarah.johnson@classroots.edu">Sarah Johnson - Grade 3 Math</option>
+                  <option value="michael.chen@classroots.edu">Michael Chen - Grade 4 Math</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="messageSubject" class="form-label">Subject</label>
+                <input type="text" class="form-control" id="messageSubject" required>
+              </div>
+              <div class="mb-3">
+                <label for="messagePriority" class="form-label">Priority</label>
+                <select class="form-select" id="messagePriority">
+                  <option value="low">Low</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="high">High</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="messageContent" class="form-label">Message</label>
+                <textarea class="form-control" id="messageContent" rows="5" required></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="sendMessageToTeacher()">Send Message</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Report Absence Modal -->
+    <div class="modal fade" id="reportAbsenceModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Report Absence</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="reportAbsenceForm">
+              <div class="mb-3">
+                <label for="absenceDate" class="form-label">Date of Absence</label>
+                <input type="date" class="form-control" id="absenceDate" required>
+              </div>
+              <div class="mb-3">
+                <label for="absenceReason" class="form-label">Reason</label>
+                <select class="form-select" id="absenceReason" required>
+                  <option value="">Select Reason</option>
+                  <option value="illness">Illness</option>
+                  <option value="medical">Medical Appointment</option>
+                  <option value="family">Family Emergency</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="absenceNotes" class="form-label">Additional Notes</label>
+                <textarea class="form-control" id="absenceNotes" rows="3"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="reportAbsence()">Report Absence</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Update Information Modal -->
+    <div class="modal fade" id="updateInfoModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Student Information</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="updateInfoForm">
+              <div class="mb-3">
+                <label for="updateType" class="form-label">Information Type</label>
+                <select class="form-select" id="updateType" required>
+                  <option value="">Select Type</option>
+                  <option value="medical">Medical Information</option>
+                  <option value="emergency">Emergency Contact</option>
+                  <option value="allergy">Allergy Information</option>
+                  <option value="pickup">Pickup Authorization</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="updateDetails" class="form-label">Details</label>
+                <textarea class="form-control" id="updateDetails" rows="5" required></textarea>
+              </div>
+              <div class="mb-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="urgentUpdate">
+                  <label class="form-check-label" for="urgentUpdate">Mark as urgent</label>
+                </div>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="updateStudentInfo()">Submit Update</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JS bundle -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Custom JS -->
+    <script src="./scripts/main.js"></script>
+    <script src="./scripts/parent.js"></script>
+  </body>
+</html>
