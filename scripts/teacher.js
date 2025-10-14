@@ -244,6 +244,136 @@ const sampleData = {
       priority: "Low",
       date: "2024-09-17",
       response: "The field trip is scheduled for October 15th. Permission slips will be sent home next week."
+    },
+    {
+      id: 6,
+      ticketNumber: "TKT-006",
+      parentName: "Jennifer Davis",
+      studentName: "Sophia Davis",
+      className: "Grade 3 Math",
+      subject: "Absence Excuse",
+      message: "Sophia was absent yesterday due to a doctor's appointment. I've attached the medical note. Will this be excused?",
+      status: "Open",
+      priority: "Medium",
+      date: "2024-09-22",
+      response: ""
+    },
+    {
+      id: 7,
+      ticketNumber: "TKT-007",
+      parentName: "David Wilson",
+      studentName: "Ethan Wilson",
+      className: "Grade 5 Math",
+      subject: "Learning Disability Accommodation",
+      message: "Ethan has been diagnosed with dyscalculia. Can we discuss accommodations for math class?",
+      status: "In Progress",
+      priority: "High",
+      date: "2024-09-21",
+      response: "I'll work with the special education team to ensure Ethan gets the support he needs. Let's schedule a meeting this week."
+    },
+    {
+      id: 8,
+      ticketNumber: "TKT-008",
+      parentName: "Lisa Anderson",
+      studentName: "Mason Anderson",
+      className: "Grade 4 Math",
+      subject: "Bullying Concern",
+      message: "Mason mentioned that some students are making fun of him during math class. Can you please address this?",
+      status: "Resolved",
+      priority: "High",
+      date: "2024-09-20",
+      response: "I've addressed this issue immediately and spoke with all students involved. I've also implemented additional classroom management strategies to prevent this from happening again."
+    },
+    {
+      id: 9,
+      ticketNumber: "TKT-009",
+      parentName: "Mark Thompson",
+      studentName: "Isabella Thompson",
+      className: "Grade 3 Math",
+      subject: "Advanced Work Request",
+      message: "Isabella finds the current math work too easy. Could she be given more challenging assignments?",
+      status: "Open",
+      priority: "Low",
+      date: "2024-09-23",
+      response: ""
+    },
+    {
+      id: 10,
+      ticketNumber: "TKT-010",
+      parentName: "Sarah Martinez",
+      studentName: "Lucas Martinez",
+      className: "Grade 5 Math",
+      subject: "Technology Issues",
+      message: "Lucas is having trouble accessing the online math homework platform. The login isn't working.",
+      status: "Closed",
+      priority: "Medium",
+      date: "2024-09-19",
+      response: "I've reset Lucas's password and sent you the new login information. The issue should be resolved now."
+    },
+    {
+      id: 11,
+      ticketNumber: "TKT-011",
+      parentName: "Kevin Lee",
+      studentName: "Mia Lee",
+      className: "Grade 4 Math",
+      subject: "Parent-Teacher Conference",
+      message: "I'd like to schedule a conference to discuss Mia's progress. What times are available?",
+      status: "In Progress",
+      priority: "Medium",
+      date: "2024-09-22",
+      response: "I have availability on Tuesday and Thursday afternoons. I'll send you a calendar invite with available time slots."
+    },
+    {
+      id: 12,
+      ticketNumber: "TKT-012",
+      parentName: "Amanda Taylor",
+      studentName: "Jackson Taylor",
+      className: "Grade 3 Math",
+      subject: "Homework Policy Question",
+      message: "What is the policy for late homework? Jackson missed a few assignments due to family emergency.",
+      status: "Resolved",
+      priority: "Low",
+      date: "2024-09-18",
+      response: "I understand family emergencies happen. I'll accept the late homework without penalty. Please have Jackson submit it when he's ready."
+    },
+    {
+      id: 13,
+      ticketNumber: "TKT-013",
+      parentName: "Chris Rodriguez",
+      studentName: "Aria Rodriguez",
+      className: "Grade 5 Math",
+      subject: "Test Anxiety",
+      message: "Aria gets very anxious during math tests. Is there anything we can do to help her?",
+      status: "Open",
+      priority: "Medium",
+      date: "2024-09-24",
+      response: ""
+    },
+    {
+      id: 14,
+      ticketNumber: "TKT-014",
+      parentName: "Rachel Green",
+      studentName: "Caleb Green",
+      className: "Grade 4 Math",
+      subject: "Grading Question",
+      message: "I noticed Caleb received a 75% on the fractions quiz, but I thought he did better. Can we review this?",
+      status: "In Progress",
+      priority: "Medium",
+      date: "2024-09-23",
+      response: "I'd be happy to review the quiz with you. Let me pull up Caleb's work and we can go through it together."
+    },
+    {
+      id: 15,
+      ticketNumber: "TKT-015",
+      parentName: "Tom White",
+      studentName: "Zoe White",
+      className: "Grade 3 Math",
+      subject: "Classroom Supplies",
+      message: "Zoe mentioned the class needs more calculators. Would you like me to donate some?",
+      status: "Closed",
+      priority: "Low",
+      date: "2024-09-16",
+      response: "That's very generous! Yes, we could use a few more calculators. I'll coordinate with the office to arrange the donation."
     }
   ],
   parentForms: [
@@ -296,6 +426,56 @@ const sampleData = {
       submittedDate: "2024-09-17",
       status: "Approved",
       content: "Authorization for daily medication during school hours."
+    },
+    {
+      id: 6,
+      studentName: "Sophia Davis",
+      className: "Grade 3 Math",
+      formType: "Medical",
+      title: "Allergy Information Update",
+      submittedDate: "2024-09-22",
+      status: "New",
+      content: "Sophia has developed a new allergy to peanuts. Please ensure no peanut products in the classroom."
+    },
+    {
+      id: 7,
+      studentName: "Ethan Wilson",
+      className: "Grade 5 Math",
+      formType: "Emergency",
+      title: "Special Needs Accommodation",
+      submittedDate: "2024-09-21",
+      status: "New",
+      content: "Requesting additional support for Ethan's dyscalculia. Need extended time for tests and assignments."
+    },
+    {
+      id: 8,
+      studentName: "Mason Anderson",
+      className: "Grade 4 Math",
+      formType: "Behavior",
+      title: "Behavior Incident Report",
+      submittedDate: "2024-09-20",
+      status: "Approved",
+      content: "Report regarding bullying incident. Action has been taken and situation resolved."
+    },
+    {
+      id: 9,
+      studentName: "Isabella Thompson",
+      className: "Grade 3 Math",
+      formType: "Field Trip",
+      title: "Volunteer for Field Trip",
+      submittedDate: "2024-09-23",
+      status: "Pending",
+      content: "Offering to volunteer as a chaperone for the upcoming math museum field trip."
+    },
+    {
+      id: 10,
+      studentName: "Lucas Martinez",
+      className: "Grade 5 Math",
+      formType: "Emergency",
+      title: "Technology Access Request",
+      submittedDate: "2024-09-19",
+      status: "Approved",
+      content: "Request for additional computer time at home to complete online math assignments."
     }
   ],
   messageHistory: [
@@ -343,6 +523,96 @@ const sampleData = {
       type: "Email",
       subject: "Field Trip Details",
       status: "Read"
+    },
+    {
+      id: 6,
+      date: "2024-09-22",
+      recipient: "Jennifer Davis",
+      student: "Sophia Davis",
+      type: "Email",
+      subject: "Absence Excuse Confirmation",
+      status: "Sent"
+    },
+    {
+      id: 7,
+      date: "2024-09-21",
+      recipient: "David Wilson",
+      student: "Ethan Wilson",
+      type: "Email",
+      subject: "Special Education Meeting Scheduled",
+      status: "Delivered"
+    },
+    {
+      id: 8,
+      date: "2024-09-20",
+      recipient: "Lisa Anderson",
+      student: "Mason Anderson",
+      type: "SMS",
+      subject: "Bullying Issue Resolved",
+      status: "Read"
+    },
+    {
+      id: 9,
+      date: "2024-09-23",
+      recipient: "Mark Thompson",
+      student: "Isabella Thompson",
+      type: "Email",
+      subject: "Advanced Math Work Assignment",
+      status: "Sent"
+    },
+    {
+      id: 10,
+      date: "2024-09-19",
+      recipient: "Sarah Martinez",
+      student: "Lucas Martinez",
+      type: "In-App",
+      subject: "Login Issue Resolved",
+      status: "Read"
+    },
+    {
+      id: 11,
+      date: "2024-09-22",
+      recipient: "Kevin Lee",
+      student: "Mia Lee",
+      type: "Email",
+      subject: "Parent-Teacher Conference Scheduled",
+      status: "Sent"
+    },
+    {
+      id: 12,
+      date: "2024-09-18",
+      recipient: "Amanda Taylor",
+      student: "Jackson Taylor",
+      type: "Email",
+      subject: "Late Homework Policy Clarification",
+      status: "Read"
+    },
+    {
+      id: 13,
+      date: "2024-09-24",
+      recipient: "Chris Rodriguez",
+      student: "Aria Rodriguez",
+      type: "Email",
+      subject: "Test Anxiety Support Resources",
+      status: "Sent"
+    },
+    {
+      id: 14,
+      date: "2024-09-23",
+      recipient: "Rachel Green",
+      student: "Caleb Green",
+      type: "SMS",
+      subject: "Quiz Review Meeting Scheduled",
+      status: "Delivered"
+    },
+    {
+      id: 15,
+      date: "2024-09-16",
+      recipient: "Tom White",
+      student: "Zoe White",
+      type: "Email",
+      subject: "Calculator Donation Thank You",
+      status: "Read"
     }
   ],
   messageTemplates: {
@@ -373,12 +643,13 @@ document.addEventListener('DOMContentLoaded', function() {
   initializeDashboard();
   setupEventListeners();
   loadClasses();
+  loadParentCommunication(); // Load parent communication data on page load
 });
 
 function initializeDashboard() {
-  // Set up tab navigation
-  const tabButtons = document.querySelectorAll('[data-tab]');
-  tabButtons.forEach(button => {
+  // Set up main tab navigation (sidebar only)
+  const mainTabButtons = document.querySelectorAll('.sidebar [data-tab]');
+  mainTabButtons.forEach(button => {
     button.addEventListener('click', function() {
       const tabName = this.getAttribute('data-tab');
       switchTab(tabName);
@@ -422,19 +693,64 @@ function setupEventListeners() {
       saveProfile();
     });
   }
+
+  // Communication tabs
+  const communicationTabs = document.querySelectorAll('#communicationTabs [data-tab]');
+  communicationTabs.forEach(button => {
+    button.addEventListener('click', function() {
+      const tabName = this.getAttribute('data-tab');
+      switchCommunicationTab(tabName);
+    });
+  });
+
+  // Message form submission
+  const sendMessageForm = document.getElementById('sendMessageForm');
+  if (sendMessageForm) {
+    sendMessageForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      sendMessage();
+    });
+  }
+
+  // Ticket filtering
+  const ticketClassFilter = document.getElementById('ticketClassFilter');
+  if (ticketClassFilter) {
+    ticketClassFilter.addEventListener('change', filterTickets);
+  }
+
+  const ticketStatusFilter = document.getElementById('ticketStatusFilter');
+  if (ticketStatusFilter) {
+    ticketStatusFilter.addEventListener('change', filterTickets);
+  }
+
+  const ticketSearch = document.getElementById('ticketSearch');
+  if (ticketSearch) {
+    ticketSearch.addEventListener('input', filterTickets);
+  }
+
+  // Form filtering
+  const formClassFilter = document.getElementById('formClassFilter');
+  if (formClassFilter) {
+    formClassFilter.addEventListener('change', filterForms);
+  }
+
+  const formTypeFilter = document.getElementById('formTypeFilter');
+  if (formTypeFilter) {
+    formTypeFilter.addEventListener('change', filterForms);
+  }
 }
 
 function switchTab(tabName) {
-  // Hide all tab contents
-  const tabContents = document.querySelectorAll('.tab-content');
-  tabContents.forEach(content => {
+  // Hide all main tab contents (not communication sub-tabs)
+  const mainTabContents = document.querySelectorAll('.main-content > .tab-content');
+  mainTabContents.forEach(content => {
     content.classList.remove('active');
     content.style.display = 'none';
   });
 
-  // Remove active class from all tab buttons
-  const tabButtons = document.querySelectorAll('[data-tab]');
-  tabButtons.forEach(button => {
+  // Remove active class from main navigation tab buttons only
+  const mainTabButtons = document.querySelectorAll('.sidebar [data-tab]');
+  mainTabButtons.forEach(button => {
     button.classList.remove('active');
   });
 
@@ -446,7 +762,7 @@ function switchTab(tabName) {
   }
 
   // Add active class to clicked button
-  const clickedButton = document.querySelector(`[data-tab="${tabName}"]`);
+  const clickedButton = document.querySelector(`.sidebar [data-tab="${tabName}"]`);
   if (clickedButton) {
     clickedButton.classList.add('active');
   }
@@ -967,6 +1283,50 @@ function loadParentCommunication() {
   updateCommunicationStats();
 }
 
+function switchCommunicationTab(tabName) {
+  // Hide all communication tab contents
+  const communicationTabContents = document.querySelectorAll('#parent-communication-tab .tab-content');
+  communicationTabContents.forEach(content => {
+    content.classList.remove('active');
+    content.style.display = 'none';
+  });
+
+  // Remove active class from all communication tab buttons
+  const communicationTabButtons = document.querySelectorAll('#communicationTabs [data-tab]');
+  communicationTabButtons.forEach(button => {
+    button.classList.remove('active');
+  });
+
+  // Show selected tab
+  const selectedTab = document.getElementById(tabName + '-tab');
+  if (selectedTab) {
+    selectedTab.classList.add('active');
+    selectedTab.style.display = 'block';
+  }
+
+  // Add active class to clicked button
+  const clickedButton = document.querySelector(`#communicationTabs [data-tab="${tabName}"]`);
+  if (clickedButton) {
+    clickedButton.classList.add('active');
+  }
+
+  // Load tab-specific data
+  switch(tabName) {
+    case 'parent-tickets':
+      loadParentTickets();
+      break;
+    case 'parent-forms':
+      loadParentForms();
+      break;
+    case 'automated-messages':
+      // Automated messages are already loaded in HTML
+      break;
+    case 'message-history':
+      loadMessageHistory();
+      break;
+  }
+}
+
 function loadParentTickets() {
   const ticketsTable = document.getElementById('tickets-table');
   if (!ticketsTable) return;
@@ -997,6 +1357,77 @@ function loadParentTickets() {
       </td>
     `;
     ticketsTable.appendChild(row);
+  });
+}
+
+function filterTickets() {
+  const classFilter = document.getElementById('ticketClassFilter')?.value || '';
+  const statusFilter = document.getElementById('ticketStatusFilter')?.value || '';
+  const searchTerm = document.getElementById('ticketSearch')?.value.toLowerCase() || '';
+
+  const ticketsTable = document.getElementById('tickets-table');
+  if (!ticketsTable) return;
+
+  ticketsTable.innerHTML = '';
+
+  const filteredTickets = sampleData.parentTickets.filter(ticket => {
+    const matchesClass = !classFilter || ticket.className === classFilter;
+    const matchesStatus = !statusFilter || ticket.status === statusFilter;
+    const matchesSearch = !searchTerm || 
+      ticket.parentName.toLowerCase().includes(searchTerm) ||
+      ticket.studentName.toLowerCase().includes(searchTerm) ||
+      ticket.subject.toLowerCase().includes(searchTerm) ||
+      ticket.message.toLowerCase().includes(searchTerm);
+
+    return matchesClass && matchesStatus && matchesSearch;
+  });
+
+  filteredTickets.forEach(ticket => {
+    const row = document.createElement('tr');
+    const statusClass = getStatusClass(ticket.status);
+    const priorityClass = getPriorityClass(ticket.priority);
+    
+    row.innerHTML = `
+      <td><strong>${ticket.ticketNumber}</strong></td>
+      <td>${ticket.parentName}</td>
+      <td>${ticket.studentName}</td>
+      <td>${ticket.className}</td>
+      <td>${ticket.subject}</td>
+      <td><span class="badge ${statusClass}">${ticket.status}</span></td>
+      <td><span class="badge ${priorityClass}">${ticket.priority}</span></td>
+      <td>${formatDate(ticket.date)}</td>
+      <td>
+        <button class="btn btn-sm btn-outline-primary me-1" onclick="viewTicket(${ticket.id})">
+          <i class="bi bi-eye"></i>
+        </button>
+        <button class="btn btn-sm btn-outline-success" onclick="replyToTicket(${ticket.id})">
+          <i class="bi bi-reply"></i>
+        </button>
+      </td>
+    `;
+    ticketsTable.appendChild(row);
+  });
+}
+
+function filterForms() {
+  const classFilter = document.getElementById('formClassFilter')?.value || '';
+  const typeFilter = document.getElementById('formTypeFilter')?.value || '';
+
+  const formsGrid = document.getElementById('parent-forms-grid');
+  if (!formsGrid) return;
+
+  formsGrid.innerHTML = '';
+
+  const filteredForms = sampleData.parentForms.filter(form => {
+    const matchesClass = !classFilter || form.className === classFilter;
+    const matchesType = !typeFilter || form.formType === typeFilter;
+
+    return matchesClass && matchesType;
+  });
+
+  filteredForms.forEach(form => {
+    const formCard = createFormCard(form);
+    formsGrid.appendChild(formCard);
   });
 }
 
