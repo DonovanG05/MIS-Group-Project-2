@@ -2,6 +2,73 @@
 
 // Sample data - in a real app, this would come from the database
 const sampleData = {
+  assignments: [
+    {
+      id: 1,
+      name: "Chapter 5 Addition & Subtraction",
+      type: "test",
+      totalPoints: 100,
+      dueDate: "2024-10-15",
+      date: "2024-10-10",
+      completed: false
+    },
+    {
+      id: 2,
+      name: "Multiplication Tables Practice",
+      type: "homework",
+      totalPoints: 25,
+      dueDate: "2024-10-08",
+      date: "2024-10-01",
+      completed: true
+    },
+    {
+      id: 3,
+      name: "Fractions Worksheet",
+      type: "classwork",
+      totalPoints: 50,
+      dueDate: "2024-10-12",
+      date: "2024-10-05",
+      completed: true
+    },
+    {
+      id: 4,
+      name: "Weekly Math Review",
+      type: "quiz",
+      totalPoints: 20,
+      dueDate: "2024-10-06",
+      date: "2024-09-30",
+      completed: true
+    },
+    {
+      id: 5,
+      name: "Math Presentation",
+      type: "project",
+      totalPoints: 50,
+      dueDate: "2024-10-20",
+      date: "2024-10-01",
+      completed: false
+    }
+  ],
+  assignmentGrades: {
+    // Format: assignmentId: [{studentId: grade, ...}]
+    1: [], // Empty - need to be graded
+    2: [
+      {studentId: 1, pointsEarned: 23},
+      {studentId: 3, pointsEarned: 24},
+      {studentId: 5, pointsEarned: 25}
+    ],
+    3: [
+      {studentId: 1, pointsEarned: 48},
+      {studentId: 3, pointsEarned: 45},
+      {studentId: 5, pointsEarned: 50}
+    ],
+    4: [
+      {studentId: 1, pointsEarned: 20},
+      {studentId: 3, pointsEarned: 18},
+      {studentId: 5, pointsEarned: 19}
+    ],
+    5: []
+  },
   classes: [
     {
       id: 1,
@@ -840,8 +907,46 @@ function enterClass(classId) {
   
   // Load class-specific data
   loadClassStudents();
-  loadClassGrades();
+  loadAssignments(); // Load assignments for grading center
   loadClassAttendance();
+
+  // Set up class tab navigation
+  setupClassTabs();
+}
+
+function setupClassTabs() {
+  const classTabs = document.querySelectorAll('#classTabs [data-tab]');
+  classTabs.forEach(button => {
+    button.addEventListener('click', function() {
+      const tabName = this.getAttribute('data-tab');
+      
+      // Remove active from all class tab buttons
+      classTabs.forEach(btn => btn.classList.remove('active'));
+      this.classList.add('active');
+      
+      // Hide all class tab contents
+      const tabContents = ['students', 'grading', 'attendance'];
+      tabContents.forEach(tab => {
+        const tabElement = document.getElementById(tab + '-tab');
+        if (tabElement) {
+          tabElement.classList.remove('active');
+          tabElement.style.display = 'none';
+        }
+      });
+      
+      // Show selected tab
+      const selectedTab = document.getElementById(tabName + '-tab');
+      if (selectedTab) {
+        selectedTab.classList.add('active');
+        selectedTab.style.display = 'block';
+      }
+      
+      // Load specific data if needed
+      if (tabName === 'grading') {
+        loadAssignments();
+      }
+    });
+  });
 }
 
 function showClassesTab() {
@@ -857,6 +962,7 @@ function loadClassStudents() {
   studentsTable.innerHTML = '';
 
   sampleData.students.forEach(student => {
+    const averageGrade = calculateStudentAverage(student.id);
     const row = document.createElement('tr');
     row.innerHTML = `
       <td>${student.firstName} ${student.lastName}</td>
@@ -866,16 +972,47 @@ function loadClassStudents() {
         <small class="text-muted">${student.parentPhone}</small>
       </td>
       <td>
-        <button class="btn btn-sm btn-outline-primary me-1" onclick="viewStudent(${student.id})">
+        ${averageGrade > 0 ? `<span class="badge ${getGradeBadgeClass(averageGrade)}">${averageGrade}%</span>` : '<span class="text-muted">No grades yet</span>'}
+      </td>
+      <td>
+        <button class="btn btn-sm btn-outline-primary" onclick="viewStudent(${student.id})">
           <i class="bi bi-eye"></i>
-        </button>
-        <button class="btn btn-sm btn-outline-secondary" onclick="editStudent(${student.id})">
-          <i class="bi bi-pencil"></i>
         </button>
       </td>
     `;
     studentsTable.appendChild(row);
   });
+}
+
+function calculateStudentAverage(studentId) {
+  const studentGrades = [];
+  
+  // Get all grades for this student from all assignments
+  for (const assignmentId in sampleData.assignmentGrades) {
+    const grades = sampleData.assignmentGrades[assignmentId];
+    const studentGrade = grades.find(g => g.studentId === studentId);
+    
+    if (studentGrade) {
+      const assignment = sampleData.assignments.find(a => a.id == assignmentId);
+      if (assignment) {
+        const percentage = (studentGrade.pointsEarned / assignment.totalPoints) * 100;
+        studentGrades.push(percentage);
+      }
+    }
+  }
+  
+  if (studentGrades.length === 0) return 0;
+  
+  const average = studentGrades.reduce((sum, grade) => sum + grade, 0) / studentGrades.length;
+  return Math.round(average);
+}
+
+function getGradeBadgeClass(average) {
+  if (average >= 90) return 'bg-success';
+  if (average >= 80) return 'bg-primary';
+  if (average >= 70) return 'bg-info';
+  if (average >= 60) return 'bg-warning';
+  return 'bg-danger';
 }
 
 function loadClassGrades() {
@@ -1770,4 +1907,460 @@ function showAlert(message, type = 'info') {
       alertDiv.remove();
     }
   }, 5000);
+}
+
+// Grading Center Functions
+let currentAssignmentId = null;
+
+function loadAssignments() {
+  const assignmentsGrid = document.getElementById('assignments-grid');
+  if (!assignmentsGrid) return;
+
+  assignmentsGrid.innerHTML = '';
+
+  // Filter assignments if needed
+  const typeFilter = document.getElementById('assignmentTypeFilter')?.value || '';
+  const filteredAssignments = sampleData.assignments.filter(assignment => {
+    return !typeFilter || assignment.type === typeFilter;
+  });
+
+  filteredAssignments.forEach(assignment => {
+    const assignmentCard = createAssignmentCard(assignment);
+    assignmentsGrid.appendChild(assignmentCard);
+  });
+}
+
+function createAssignmentCard(assignment) {
+  const col = document.createElement('div');
+  col.className = 'col-md-6 col-lg-4 mb-4';
+
+  const typeBadge = getTypeBadgeClass(assignment.type);
+  const typeLabel = assignment.type.charAt(0).toUpperCase() + assignment.type.slice(1);
+  const totalGraded = sampleData.assignmentGrades[assignment.id]?.length || 0;
+  const completionStatus = totalGraded > 0 ? 
+    `<i class="bi bi-check-circle text-success me-1"></i>${totalGraded} graded` : 
+    `<i class="bi bi-clock text-warning me-1"></i>Not graded`;
+
+  col.innerHTML = `
+    <div class="card h-100 assignment-card" onclick="openAssignmentGrading(${assignment.id})">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-start mb-2">
+          <h6 class="card-title">${assignment.name}</h6>
+          <span class="badge ${typeBadge}">${typeLabel}</span>
+        </div>
+        <div class="mb-2">
+          <small class="text-muted">
+            <i class="bi bi-file-earmark-text me-1"></i>${assignment.totalPoints} points
+          </small>
+        </div>
+        <div class="mb-2">
+          <small class="text-muted">
+            <i class="bi bi-calendar me-1"></i>Due: ${formatDate(assignment.dueDate)}
+          </small>
+        </div>
+        <div>
+          ${completionStatus}
+        </div>
+      </div>
+    </div>
+  `;
+
+  return col;
+}
+
+function getTypeBadgeClass(type) {
+  const badgeMap = {
+    'homework': 'bg-primary',
+    'classwork': 'bg-info',
+    'test': 'bg-danger',
+    'quiz': 'bg-warning',
+    'project': 'bg-success'
+  };
+  return badgeMap[type] || 'bg-secondary';
+}
+
+function filterAssignments() {
+  loadAssignments();
+}
+
+function openAssignmentGrading(assignmentId) {
+  currentAssignmentId = assignmentId;
+  const assignment = sampleData.assignments.find(a => a.id === assignmentId);
+  if (!assignment) return;
+
+  // Update assignment details in UI
+  document.getElementById('grading-assignment-title').textContent = assignment.name;
+  document.getElementById('grading-total-points').textContent = assignment.totalPoints;
+  document.getElementById('grading-due-date').textContent = formatDate(assignment.dueDate);
+  document.getElementById('grading-assignment-type').textContent = 
+    assignment.type.charAt(0).toUpperCase() + assignment.type.slice(1);
+
+  // Load student grades
+  loadStudentGradesForAssignment(assignmentId, assignment.totalPoints);
+
+  // Switch views
+  document.getElementById('assignments-list-view').style.display = 'none';
+  document.getElementById('assignment-grading-view').style.display = 'block';
+}
+
+function loadStudentGradesForAssignment(assignmentId, totalPoints) {
+  const gradesTable = document.getElementById('student-grades-table');
+  if (!gradesTable) return;
+
+  gradesTable.innerHTML = '';
+
+  const existingGrades = sampleData.assignmentGrades[assignmentId] || [];
+  const allStudents = sampleData.students;
+  
+  // Create grade entries for each student
+  allStudents.forEach(student => {
+    const existingGrade = existingGrades.find(g => g.studentId === student.id);
+    const pointsEarned = existingGrade ? existingGrade.pointsEarned : '';
+    const percentage = pointsEarned ? Math.round((pointsEarned / totalPoints) * 100) : '';
+    const letterGrade = pointsEarned ? calculateLetterGrade((pointsEarned / totalPoints) * 100) : '';
+    const gradeClass = pointsEarned ? getGradeClass(letterGrade) : '';
+
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${student.firstName} ${student.lastName}</td>
+      <td>
+        <input 
+          type="number" 
+          class="form-control grade-input" 
+          data-student-id="${student.id}"
+          value="${pointsEarned}"
+          min="0"
+          max="${totalPoints}"
+          onchange="updateGradeCalculations(this)"
+        />
+      </td>
+      <td>
+        <span class="grade-percentage">${percentage}%</span>
+      </td>
+      <td>
+        <span class="grade-letter-grade">
+          ${letterGrade ? `<span class="badge grade-${gradeClass}">${letterGrade}</span>` : '-'}
+        </span>
+      </td>
+      <td>
+        <button class="btn btn-sm btn-success me-1" onclick="openUpdateGradeModal(${student.id}, ${assignmentId})">
+          <i class="bi bi-pencil-square me-1"></i>Update
+        </button>
+        <button class="btn btn-sm btn-outline-danger" onclick="clearStudentGrade(${student.id})">
+          <i class="bi bi-x"></i>
+        </button>
+      </td>
+    `;
+    gradesTable.appendChild(row);
+  });
+
+  updateGradingProgress();
+}
+
+function updateGradeCalculations(input) {
+  const row = input.closest('tr');
+  const totalPoints = parseFloat(document.getElementById('grading-total-points').textContent);
+  const pointsEarned = parseFloat(input.value) || 0;
+  
+  const percentage = totalPoints > 0 ? Math.round((pointsEarned / totalPoints) * 100) : 0;
+  const letterGrade = calculateLetterGrade(percentage);
+  const gradeClass = getGradeClass(letterGrade);
+
+  // Update percentage
+  const percentageCell = row.querySelector('.grade-percentage');
+  percentageCell.textContent = isNaN(percentage) ? '' : percentage + '%';
+
+  // Update letter grade
+  const letterGradeCell = row.querySelector('.grade-letter-grade');
+  if (pointsEarned > 0 && !isNaN(percentage)) {
+    letterGradeCell.innerHTML = `<span class="badge grade-${gradeClass}">${letterGrade}</span>`;
+  } else {
+    letterGradeCell.innerHTML = '-';
+  }
+
+  updateGradingProgress();
+}
+
+function clearStudentGrade(studentId) {
+  const input = document.querySelector(`input[data-student-id="${studentId}"]`);
+  if (input) {
+    input.value = '';
+    updateGradeCalculations(input);
+  }
+}
+
+function updateGradingProgress() {
+  const totalPoints = parseFloat(document.getElementById('grading-total-points').textContent);
+  const inputs = document.querySelectorAll('.grade-input');
+  let gradedCount = 0;
+  let totalCount = inputs.length;
+
+  inputs.forEach(input => {
+    if (input.value && parseFloat(input.value) > 0) {
+      gradedCount++;
+    }
+  });
+
+  document.getElementById('grading-progress').textContent = `${gradedCount}/${totalCount}`;
+}
+
+function showAssignmentsList() {
+  document.getElementById('assignment-grading-view').style.display = 'none';
+  document.getElementById('assignments-list-view').style.display = 'block';
+  currentAssignmentId = null;
+}
+
+function saveAllGrades() {
+  if (!currentAssignmentId) return;
+
+  const totalPoints = parseFloat(document.getElementById('grading-total-points').textContent);
+  const inputs = document.querySelectorAll('.grade-input');
+  const grades = [];
+
+  inputs.forEach(input => {
+    const studentId = parseInt(input.getAttribute('data-student-id'));
+    const pointsEarned = parseFloat(input.value);
+    
+    if (!isNaN(pointsEarned) && pointsEarned > 0) {
+      grades.push({
+        studentId: studentId,
+        pointsEarned: pointsEarned
+      });
+    }
+  });
+
+  // Save grades to data structure
+  sampleData.assignmentGrades[currentAssignmentId] = grades;
+
+  // Update assignments list to show completion status
+  loadAssignments();
+
+  showAlert(`Grades saved successfully for ${grades.length} students!`, 'success');
+}
+
+function createAssignment() {
+  const name = document.getElementById('newAssignmentName').value;
+  const type = document.getElementById('newAssignmentType').value;
+  const totalPoints = parseFloat(document.getElementById('newTotalPoints').value);
+  const dueDate = document.getElementById('newDueDate').value;
+
+  if (!name || !type || !totalPoints) {
+    showAlert('Please fill in all required fields', 'danger');
+    return;
+  }
+
+  const newAssignment = {
+    id: sampleData.assignments.length + 1,
+    name: name,
+    type: type,
+    totalPoints: totalPoints,
+    dueDate: dueDate || new Date().toISOString().split('T')[0],
+    date: new Date().toISOString().split('T')[0],
+    completed: false
+  };
+
+  sampleData.assignments.push(newAssignment);
+  sampleData.assignmentGrades[newAssignment.id] = [];
+
+  loadAssignments();
+
+  // Close modal
+  const modal = bootstrap.Modal.getInstance(document.getElementById('addAssignmentModal'));
+  modal.hide();
+
+  // Reset form
+  document.getElementById('addAssignmentForm').reset();
+
+  showAlert('Assignment created successfully!', 'success');
+}
+
+// Open update grade modal from grading center (assignment-specific)
+function openUpdateGradeModal(studentId, assignmentId) {
+  const student = sampleData.students.find(s => s.id === studentId);
+  const assignment = sampleData.assignments.find(a => a.id === assignmentId);
+  
+  if (!student || !assignment) return;
+
+  // Set student info
+  document.getElementById('update-student-name').value = `${student.firstName} ${student.lastName}`;
+  document.getElementById('update-student-id').value = studentId;
+
+  // Populate assignments dropdown and set the selected assignment
+  const assignmentSelect = document.getElementById('update-assignment-select');
+  assignmentSelect.innerHTML = '';
+  
+  sampleData.assignments.forEach(a => {
+    const option = document.createElement('option');
+    option.value = a.id;
+    option.textContent = `${a.name} (${a.totalPoints} points)`;
+    option.setAttribute('data-total-points', a.totalPoints);
+    if (a.id === assignmentId) {
+      option.selected = true;
+    }
+    assignmentSelect.appendChild(option);
+  });
+
+  // Disable the assignment dropdown when opened from grading center
+  assignmentSelect.disabled = true;
+
+  // Update total points and max value
+  document.getElementById('update-total-points').textContent = assignment.totalPoints;
+  const pointsInput = document.getElementById('update-points-earned');
+  pointsInput.max = assignment.totalPoints;
+
+  // Load existing grade if it exists
+  const existingGrades = sampleData.assignmentGrades[assignmentId] || [];
+  const existingGrade = existingGrades.find(g => g.studentId === studentId);
+  
+  if (existingGrade) {
+    pointsInput.value = existingGrade.pointsEarned;
+    updateGradeDisplay();
+  } else {
+    pointsInput.value = '';
+    document.getElementById('update-grade-display').textContent = 'N/A';
+  }
+
+  // Setup event listeners
+  assignmentSelect.onchange = handleAssignmentChange;
+  pointsInput.oninput = updateGradeDisplay;
+
+  // Show modal
+  const modal = new bootstrap.Modal(document.getElementById('updateStudentGradeModal'));
+  modal.show();
+}
+
+// Update student grade functions
+function updateStudentGrade(studentId) {
+  const student = sampleData.students.find(s => s.id === studentId);
+  if (!student) return;
+
+  // Set student info
+  document.getElementById('update-student-name').value = `${student.firstName} ${student.lastName}`;
+  document.getElementById('update-student-id').value = studentId;
+
+  // Populate assignments dropdown
+  const assignmentSelect = document.getElementById('update-assignment-select');
+  assignmentSelect.innerHTML = '<option value="">Select Assignment</option>';
+  
+  sampleData.assignments.forEach(assignment => {
+    const option = document.createElement('option');
+    option.value = assignment.id;
+    option.textContent = `${assignment.name} (${assignment.totalPoints} points)`;
+    option.setAttribute('data-total-points', assignment.totalPoints);
+    assignmentSelect.appendChild(option);
+  });
+
+  // Enable the assignment dropdown when opened from Students tab
+  assignmentSelect.disabled = false;
+
+  // Reset and setup event listeners
+  assignmentSelect.onchange = handleAssignmentChange;
+  
+  const pointsInput = document.getElementById('update-points-earned');
+  pointsInput.oninput = updateGradeDisplay;
+
+  // Show modal
+  const modal = new bootstrap.Modal(document.getElementById('updateStudentGradeModal'));
+  modal.show();
+}
+
+function handleAssignmentChange() {
+  const assignmentId = document.getElementById('update-assignment-select').value;
+  if (!assignmentId) return;
+
+  const assignment = sampleData.assignments.find(a => a.id == assignmentId);
+  if (!assignment) return;
+
+  // Update total points display
+  document.getElementById('update-total-points').textContent = assignment.totalPoints;
+
+  // Set max value for points earned input
+  const pointsInput = document.getElementById('update-points-earned');
+  pointsInput.max = assignment.totalPoints;
+
+  // Check if student already has a grade for this assignment
+  const studentId = parseInt(document.getElementById('update-student-id').value);
+  const existingGrades = sampleData.assignmentGrades[assignmentId] || [];
+  const existingGrade = existingGrades.find(g => g.studentId === studentId);
+
+  if (existingGrade) {
+    pointsInput.value = existingGrade.pointsEarned;
+    updateGradeDisplay();
+  } else {
+    pointsInput.value = '';
+    document.getElementById('update-grade-display').textContent = 'N/A';
+  }
+}
+
+function updateGradeDisplay() {
+  const pointsEarned = parseFloat(document.getElementById('update-points-earned').value);
+  const totalPoints = parseFloat(document.getElementById('update-total-points').textContent);
+
+  if (!isNaN(pointsEarned) && !isNaN(totalPoints) && totalPoints > 0) {
+    const percentage = Math.round((pointsEarned / totalPoints) * 100);
+    const letterGrade = calculateLetterGrade(percentage);
+    document.getElementById('update-grade-display').textContent = 
+      `${percentage}% (${letterGrade})`;
+  } else {
+    document.getElementById('update-grade-display').textContent = 'N/A';
+  }
+}
+
+function saveStudentGrade() {
+  const studentId = parseInt(document.getElementById('update-student-id').value);
+  const assignmentId = parseInt(document.getElementById('update-assignment-select').value);
+  const pointsEarned = parseFloat(document.getElementById('update-points-earned').value);
+  const notes = document.getElementById('update-grade-notes').value;
+
+  if (!studentId || !assignmentId || isNaN(pointsEarned)) {
+    showAlert('Please fill in all required fields', 'warning');
+    return;
+  }
+
+  // Initialize assignmentGrades if it doesn't exist
+  if (!sampleData.assignmentGrades[assignmentId]) {
+    sampleData.assignmentGrades[assignmentId] = [];
+  }
+
+  // Check if grade already exists
+  const existingGradeIndex = sampleData.assignmentGrades[assignmentId].findIndex(
+    g => g.studentId === studentId
+  );
+
+  const gradeData = {
+    studentId: studentId,
+    pointsEarned: pointsEarned
+  };
+
+  if (notes) {
+    gradeData.notes = notes;
+  }
+
+  if (existingGradeIndex >= 0) {
+    // Update existing grade
+    sampleData.assignmentGrades[assignmentId][existingGradeIndex] = gradeData;
+    showAlert('Grade updated successfully!', 'success');
+  } else {
+    // Add new grade
+    sampleData.assignmentGrades[assignmentId].push(gradeData);
+    showAlert('Grade added successfully!', 'success');
+  }
+
+  // Refresh student list to show updated average
+  loadClassStudents();
+
+  // If we're in the grading center view, reload the student grades
+  if (currentAssignmentId) {
+    const assignment = sampleData.assignments.find(a => a.id === currentAssignmentId);
+    if (assignment) {
+      loadStudentGradesForAssignment(currentAssignmentId, assignment.totalPoints);
+    }
+  }
+
+  // Close modal
+  const modal = bootstrap.Modal.getInstance(document.getElementById('updateStudentGradeModal'));
+  modal.hide();
+
+  // Reset form
+  document.getElementById('updateStudentGradeForm').reset();
 }

@@ -157,6 +157,7 @@
                               <th>Student Name</th>
                               <th>Grade Level</th>
                               <th>Parent Contact</th>
+                              <th>Average Grade</th>
                               <th>Actions</th>
                             </tr>
                           </thead>
@@ -199,65 +200,86 @@
 
             <!-- Grading Center Tab -->
             <div id="grading-tab" class="tab-content">
-              <div class="row">
-                <div class="col-lg-8">
-                  <div class="card">
-                    <div class="card-header d-flex justify-content-between align-items-center">
-                      <h5 class="mb-0">Assignment Grades</h5>
-                      <div class="btn-group btn-group-sm">
-                        <button class="btn btn-outline-primary" onclick="exportGrades()">
-                          <i class="bi bi-download me-1"></i>Export
-                        </button>
-                        <button class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#gradingScaleModal">
-                          <i class="bi bi-sliders me-1"></i>Grading Scale
-                        </button>
+              <!-- Assignments List View -->
+              <div id="assignments-list-view">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <h3 class="h5 mb-0">Assignments</h3>
+                  <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAssignmentModal">
+                    <i class="bi bi-plus-circle me-1"></i>Create Assignment
+                  </button>
+                </div>
+                
+                <div class="row mb-3">
+                  <div class="col-md-6">
+                    <select class="form-select" id="assignmentTypeFilter" onchange="filterAssignments()">
+                      <option value="">All Types</option>
+                      <option value="homework">Homework</option>
+                      <option value="classwork">Classwork</option>
+                      <option value="test">Test</option>
+                      <option value="quiz">Quiz</option>
+                      <option value="project">Project</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row" id="assignments-grid">
+                  <!-- Assignments will be populated by JavaScript -->
+                </div>
+              </div>
+
+              <!-- Assignment Grading View -->
+              <div id="assignment-grading-view" style="display: none;">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                  <div>
+                    <button class="btn btn-outline-secondary me-3" onclick="showAssignmentsList()">
+                      <i class="bi bi-arrow-left me-1"></i>Back to Assignments
+                    </button>
+                    <h3 class="h5 mb-0 d-inline" id="grading-assignment-title">Assignment Name</h3>
+                  </div>
+                  <button class="btn btn-success" onclick="saveAllGrades()">
+                    <i class="bi bi-check-circle me-1"></i>Save All Grades
+                  </button>
+                </div>
+
+                <div class="card mb-4">
+                  <div class="card-header">
+                    <h5 class="mb-0" id="grading-assignment-details">Assignment Details</h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-3">
+                        <strong>Total Points:</strong> <span id="grading-total-points">100</span>
                       </div>
-                    </div>
-                    <div class="card-body">
-                      <div class="row mb-3">
-                        <div class="col-md-6">
-                          <select class="form-select" id="assignmentFilter">
-                            <option value="">All Assignments</option>
-                            <option value="Homework">Homework</option>
-                            <option value="Quiz">Quiz</option>
-                            <option value="Test">Test</option>
-                            <option value="Project">Project</option>
-                          </select>
-                        </div>
-                        <div class="col-md-6">
-                          <input type="text" class="form-control" placeholder="Search students..." id="studentSearch">
-                        </div>
+                      <div class="col-md-3">
+                        <strong>Due Date:</strong> <span id="grading-due-date">N/A</span>
                       </div>
-                      <div class="table-responsive">
-                        <table class="table table-hover">
-                          <thead class="table-light">
-                            <tr>
-                              <th>Student</th>
-                              <th>Assignment</th>
-                              <th>Type</th>
-                              <th>Points</th>
-                              <th>Grade</th>
-                              <th>Date</th>
-                              <th>Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody id="grades-table">
-                            <!-- Grades will be populated by JavaScript -->
-                          </tbody>
-                        </table>
+                      <div class="col-md-3">
+                        <strong>Type:</strong> <span id="grading-assignment-type">N/A</span>
+                      </div>
+                      <div class="col-md-3">
+                        <strong>Students Graded:</strong> <span id="grading-progress">0/0</span>
                       </div>
                     </div>
                   </div>
                 </div>
-                <div class="col-lg-4">
-                  <div class="card">
-                    <div class="card-header">
-                      <h5 class="mb-0">Grade Summary</h5>
-                    </div>
-                    <div class="card-body">
-                      <div id="grade-summary">
-                        <!-- Grade summary will be populated by JavaScript -->
-                      </div>
+
+                <div class="card">
+                  <div class="card-body p-0">
+                    <div class="table-responsive">
+                      <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                          <tr>
+                            <th style="width: 35%;">Student</th>
+                            <th style="width: 20%;">Points Earned</th>
+                            <th style="width: 12%;">Percentage</th>
+                            <th style="width: 13%;">Letter Grade</th>
+                            <th style="width: 20%;">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody id="student-grades-table">
+                          <!-- Student grades will be populated by JavaScript -->
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
@@ -735,6 +757,49 @@
       </div>
     </div>
 
+    <!-- Add Assignment Modal -->
+    <div class="modal fade" id="addAssignmentModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Create New Assignment</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="addAssignmentForm">
+              <div class="mb-3">
+                <label for="newAssignmentName" class="form-label">Assignment Name</label>
+                <input type="text" class="form-control" id="newAssignmentName" required>
+              </div>
+              <div class="mb-3">
+                <label for="newAssignmentType" class="form-label">Type</label>
+                <select class="form-select" id="newAssignmentType" required>
+                  <option value="">Select Type</option>
+                  <option value="homework">Homework</option>
+                  <option value="classwork">Classwork</option>
+                  <option value="test">Test</option>
+                  <option value="quiz">Quiz</option>
+                  <option value="project">Project</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="newTotalPoints" class="form-label">Total Points</label>
+                <input type="number" class="form-control" id="newTotalPoints" min="1" value="100" required>
+              </div>
+              <div class="mb-3">
+                <label for="newDueDate" class="form-label">Due Date</label>
+                <input type="date" class="form-control" id="newDueDate">
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="createAssignment()">Create Assignment</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Add Grade Modal -->
     <div class="modal fade" id="addGradeModal" tabindex="-1">
       <div class="modal-dialog modal-lg">
@@ -792,6 +857,52 @@
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             <button type="button" class="btn btn-primary" onclick="addGrade()">Add Grade</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Update Student Grade Modal -->
+    <div class="modal fade" id="updateStudentGradeModal" tabindex="-1">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Update Student Grade</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <form id="updateStudentGradeForm">
+              <div class="mb-3">
+                <label class="form-label">Student</label>
+                <input type="text" class="form-control" id="update-student-name" readonly>
+                <input type="hidden" id="update-student-id">
+              </div>
+              <div class="mb-3">
+                <label for="update-assignment-select" class="form-label">Assignment</label>
+                <select class="form-select" id="update-assignment-select" required>
+                  <option value="">Select Assignment</option>
+                  <!-- Options will be populated by JavaScript -->
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="update-points-earned" class="form-label">Points Earned</label>
+                <input type="number" class="form-control" id="update-points-earned" min="0" step="0.01" required>
+                <small class="text-muted">Total points: <span id="update-total-points">100</span></small>
+              </div>
+              <div class="mb-3">
+                <div class="alert alert-info">
+                  <strong>Grade:</strong> <span id="update-grade-display">N/A</span>
+                </div>
+              </div>
+              <div class="mb-3">
+                <label for="update-grade-notes" class="form-label">Notes (Optional)</label>
+                <textarea class="form-control" id="update-grade-notes" rows="3"></textarea>
+              </div>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" onclick="saveStudentGrade()">Update Grade</button>
           </div>
         </div>
       </div>

@@ -75,36 +75,159 @@ const adminData = {
   documents: [
     {
       id: 1,
-      title: "Medical Clearance - Emma Smith",
+      title: "Medical Clearance Form",
       parent: "John Smith",
       student: "Emma Smith",
       type: "medical",
       status: "pending",
       uploadDate: "2024-09-20",
       fileName: "medical_clearance_emma.pdf",
-      fileSize: "245 KB"
+      fileSize: "245 KB",
+      description: "Updated medical clearance form for student returning from illness",
+      notes: ""
     },
     {
       id: 2,
-      title: "Allergy Information - Liam Smith",
+      title: "Allergy Information Update",
       parent: "Mary Smith",
       student: "Liam Smith",
       type: "allergy",
       status: "approved",
       uploadDate: "2024-09-19",
       fileName: "allergy_info_liam.pdf",
-      fileSize: "156 KB"
+      fileSize: "156 KB",
+      description: "Peanut and tree nut allergy information",
+      notes: "Approved - All information verified"
     },
     {
       id: 3,
-      title: "Pickup Authorization - Olivia Johnson",
+      title: "Authorized Pickup Form",
       parent: "Robert Johnson",
       student: "Olivia Johnson",
       type: "pickup",
       status: "rejected",
       uploadDate: "2024-09-18",
       fileName: "pickup_auth_olivia.pdf",
-      fileSize: "89 KB"
+      fileSize: "89 KB",
+      description: "Authorization for grandmother to pick up student",
+      notes: "Incomplete - Missing signature"
+    },
+    {
+      id: 4,
+      title: "Emergency Contact Change",
+      parent: "Susan Johnson",
+      student: "Noah Johnson",
+      type: "emergency",
+      status: "pending",
+      uploadDate: "2024-09-21",
+      fileName: "emergency_contact_noah.pdf",
+      fileSize: "120 KB",
+      description: "Updated emergency contact information with new phone number",
+      notes: ""
+    },
+    {
+      id: 5,
+      title: "Medication Administration Authorization",
+      parent: "Michael Brown",
+      student: "Ava Brown",
+      type: "medical",
+      status: "pending",
+      uploadDate: "2024-09-21",
+      fileName: "medication_auth_ava.pdf",
+      fileSize: "178 KB",
+      description: "Authorization for daily medication administration at school",
+      notes: ""
+    },
+    {
+      id: 6,
+      title: "Field Trip Permission Slip",
+      parent: "Jennifer Davis",
+      student: "Sophia Davis",
+      type: "pickup",
+      status: "pending",
+      uploadDate: "2024-09-20",
+      fileName: "field_trip_permission_sophia.pdf",
+      fileSize: "95 KB",
+      description: "Permission slip for Math Museum field trip on October 15th",
+      notes: ""
+    },
+    {
+      id: 7,
+      title: "Allergy Emergency Action Plan",
+      parent: "David Wilson",
+      student: "Ethan Wilson",
+      type: "allergy",
+      status: "pending",
+      uploadDate: "2024-09-22",
+      fileName: "allergy_plan_ethan.pdf",
+      fileSize: "234 KB",
+      description: "Emergency action plan for severe peanut allergy",
+      notes: ""
+    },
+    {
+      id: 8,
+      title: "Updated Medical Information",
+      parent: "Lisa Anderson",
+      student: "Mason Anderson",
+      type: "medical",
+      status: "pending",
+      uploadDate: "2024-09-22",
+      fileName: "medical_update_mason.pdf",
+      fileSize: "167 KB",
+      description: "Updated immunization records and medical clearance",
+      notes: ""
+    },
+    {
+      id: 9,
+      title: "Field Trip Chaperone Request",
+      parent: "Mark Thompson",
+      student: "Isabella Thompson",
+      type: "pickup",
+      status: "pending",
+      uploadDate: "2024-09-21",
+      fileName: "chaperone_request_isabella.pdf",
+      fileSize: "102 KB",
+      description: "Parent requesting to be field trip chaperone",
+      notes: ""
+    },
+    {
+      id: 10,
+      title: "Dairy Allergy Update",
+      parent: "Sarah Martinez",
+      student: "Lucas Martinez",
+      type: "allergy",
+      status: "pending",
+      uploadDate: "2024-09-22",
+      fileName: "dairy_allergy_lucas.pdf",
+      fileSize: "145 KB",
+      description: "Updated allergy form for dairy intolerance",
+      notes: ""
+    },
+    {
+      id: 11,
+      title: "Summer Camp Registration",
+      parent: "Kevin Lee",
+      student: "Mia Lee",
+      type: "medical",
+      status: "pending",
+      uploadDate: "2024-09-21",
+      fileName: "camp_registration_mia.pdf",
+      fileSize: "289 KB",
+      description: "Summer camp medical forms and health information",
+      notes: ""
+    },
+    {
+      id: 12,
+      title: "Excused Absence Notice",
+      parent: "Amanda Taylor",
+      student: "Jackson Taylor",
+      type: "emergency",
+      status: "pending",
+      uploadDate: "2024-09-20",
+      fileName: "absence_notice_jackson.pdf",
+      fileSize: "78 KB",
+      description: "Doctor's note for excused medical absence",
+      notes: ""
     }
   ],
   parents: [
@@ -527,41 +650,70 @@ function loadDocuments() {
 
   documentsTable.innerHTML = '';
 
-  adminData.documents.forEach(document => {
+  // Sort documents: pending first, then by date
+  const sortedDocuments = [...adminData.documents].sort((a, b) => {
+    if (a.status === 'pending' && b.status !== 'pending') return -1;
+    if (a.status !== 'pending' && b.status === 'pending') return 1;
+    return new Date(b.uploadDate) - new Date(a.uploadDate);
+  });
+
+  sortedDocuments.forEach(doc => {
     const row = document.createElement('tr');
-    const statusClass = getDocumentStatusClass(document.status);
+    const statusClass = getDocumentStatusClass(doc.status);
+    const statusBadge = getStatusBadge(doc.status);
     
     row.innerHTML = `
       <td>
         <div class="d-flex align-items-center">
           <i class="bi bi-file-earmark me-2"></i>
           <div>
-            <div class="fw-medium">${document.title}</div>
-            <small class="text-muted">${document.fileName}</small>
+            <div class="fw-medium">${doc.title}</div>
+            <small class="text-muted">${doc.fileName} (${doc.fileSize})</small>
           </div>
         </div>
       </td>
-      <td>${document.parent}</td>
-      <td>${document.student}</td>
-      <td><span class="badge bg-secondary">${document.type}</span></td>
-      <td><span class="status-badge status-${document.status}">${document.status}</span></td>
-      <td>${formatDate(document.uploadDate)}</td>
+      <td>${doc.parent}</td>
+      <td>${doc.student}</td>
+      <td><span class="badge ${getTypeBadge(doc.type)}">${doc.type}</span></td>
+      <td>${statusBadge}</td>
+      <td>${formatDate(doc.uploadDate)}</td>
       <td>
         <div class="action-buttons">
-          <button class="btn btn-sm btn-outline-primary me-1" onclick="viewDocument(${document.id})">
-            <i class="bi bi-eye"></i>
+          <button class="btn btn-sm btn-outline-primary me-1" onclick="viewDocument(${doc.id})">
+            <i class="bi bi-eye"></i> View
           </button>
-          <button class="btn btn-sm btn-outline-success me-1" onclick="approveDocument(${document.id})">
-            <i class="bi bi-check"></i>
-          </button>
-          <button class="btn btn-sm btn-outline-danger" onclick="rejectDocument(${document.id})">
-            <i class="bi bi-x"></i>
-          </button>
+          ${doc.status === 'pending' ? `
+            <button class="btn btn-sm btn-success me-1" onclick="approveDocument(${doc.id})">
+              <i class="bi bi-check"></i> Approve
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="rejectDocument(${doc.id})">
+              <i class="bi bi-x"></i> Reject
+            </button>
+          ` : ''}
         </div>
       </td>
     `;
     documentsTable.appendChild(row);
   });
+}
+
+function getStatusBadge(status) {
+  const badges = {
+    'pending': '<span class="badge bg-warning text-dark">Pending</span>',
+    'approved': '<span class="badge bg-success">Approved</span>',
+    'rejected': '<span class="badge bg-danger">Rejected</span>'
+  };
+  return badges[status] || '<span class="badge bg-secondary">Unknown</span>';
+}
+
+function getTypeBadge(type) {
+  const badges = {
+    'medical': 'bg-danger',
+    'allergy': 'bg-warning',
+    'pickup': 'bg-info',
+    'emergency': 'bg-primary'
+  };
+  return badges[type] || 'bg-secondary';
 }
 
 function loadParents() {
@@ -979,24 +1131,38 @@ function resendMessage(id) {
 }
 
 function viewDocument(id) {
-  showAlert(`Viewing document ${id}`, 'info');
+  const doc = adminData.documents.find(d => d.id === id);
+  if (!doc) return;
+
+  const details = `Title: ${doc.title}\nParent: ${doc.parent}\nStudent: ${doc.student}\nType: ${doc.type}\nDescription: ${doc.description}\nUpload Date: ${formatDate(doc.uploadDate)}${doc.notes ? '\nNotes: ' + doc.notes : ''}`;
+  alert(details);
 }
 
 function approveDocument(id) {
-  const document = adminData.documents.find(d => d.id === id);
-  if (document) {
-    document.status = 'approved';
+  const doc = adminData.documents.find(d => d.id === id);
+  if (!doc) return;
+
+  const notes = prompt('Add approval notes (optional):');
+  if (notes !== null) {
+    doc.status = 'approved';
+    doc.notes = notes || 'Document approved';
     loadDocuments();
-    showAlert('Document approved!', 'success');
+    updateOverviewStats();
+    showAlert('Document approved successfully!', 'success');
   }
 }
 
 function rejectDocument(id) {
-  const document = adminData.documents.find(d => d.id === id);
-  if (document) {
-    document.status = 'rejected';
+  const doc = adminData.documents.find(d => d.id === id);
+  if (!doc) return;
+
+  const notes = prompt('Enter rejection reason (required):');
+  if (notes && notes.trim()) {
+    doc.status = 'rejected';
+    doc.notes = notes;
     loadDocuments();
-    showAlert('Document rejected!', 'success');
+    updateOverviewStats();
+    showAlert('Document rejected.', 'info');
   }
 }
 
