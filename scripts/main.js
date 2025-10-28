@@ -25,8 +25,67 @@ function initializeForms() {
     }
 }
 
+// API Configuration
+const API_BASE_URL = '';
+
+// API Helper Functions
+async function apiRequest(endpoint, data = null, method = 'POST') {
+    try {
+        const response = await fetch(endpoint, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: data ? JSON.stringify(data) : null
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return await response.json();
+    } catch (error) {
+        console.error('API request failed:', error);
+        return { success: false, message: 'Network error. Please check your connection.' };
+    }
+}
+
+// Predefined login credentials (fallback for demo)
+const LOGIN_CREDENTIALS = {
+    // Teacher credentials
+    'teacher@classroots.edu': { password: 'teacher123', role: 'teacher', name: 'Sarah Johnson' },
+    
+    // Parent credentials
+    'parent@classroots.edu': { password: 'parent123', role: 'parent', name: 'John Smith' },
+    
+    // Admin credentials
+    'admin@classroots.edu': { password: 'admin123', role: 'admin', name: 'Robert Anderson' }
+};
+
+// User management functions (fallback to local storage if API fails)
+function getRegisteredUsers() {
+    const users = localStorage.getItem('registeredUsers');
+    return users ? JSON.parse(users) : {};
+}
+
+function saveRegisteredUsers(users) {
+    localStorage.setItem('registeredUsers', JSON.stringify(users));
+}
+
+function registerUser(name, email, password, userType) {
+    const users = getRegisteredUsers();
+    users[email] = {
+        password: password,
+        role: userType,
+        name: name,
+        registeredAt: new Date().toISOString()
+    };
+    saveRegisteredUsers(users);
+    return users[email];
+}
+
 // Sign In Handler
-function handleSignIn(e) {
+async function handleSignIn(e) {
     e.preventDefault();
     
     const email = document.getElementById('signInEmail').value;
@@ -36,23 +95,99 @@ function handleSignIn(e) {
     // Show loading state
     showLoadingState(submitBtn);
     
-    // Simulate API call (replace with actual authentication)
-    setTimeout(() => {
+    try {
+        // Try file-based API authentication first
+        const apiResult = await apiRequest('api.php', {
+            action: 'login',
+            email: email,
+            password: password
+        });
+        
+        if (apiResult.success) {
+            // Store user info in sessionStorage
+            sessionStorage.setItem('currentUser', JSON.stringify({
+                email: apiResult.user.email,
+                role: apiResult.user.role,
+                name: apiResult.user.name,
+                id: apiResult.user.id
+            }));
+            
+            showAlert(`Welcome back, ${apiResult.user.name}! Redirecting...`, 'success');
+            
+            // Redirect based on role
+            setTimeout(() => {
+                switch(apiResult.user.role) {
+                    case 'teacher':
+                        window.location.href = 'teacher.html';
+                        break;
+                    case 'parent':
+                        window.location.href = 'parent.html';
+                        break;
+                    case 'admin':
+                        window.location.href = 'admin.html';
+                        break;
+                    default:
+                        showAlert('Invalid user role', 'danger');
+                }
+            }, 1000);
+            
+        } else {
+            // Fallback to local authentication if API fails
+            console.log('API failed, trying local authentication...');
+            
+            // Check predefined credentials first
+            let user = LOGIN_CREDENTIALS[email];
+            
+            // If not found in predefined, check registered users
+            if (!user) {
+                const registeredUsers = getRegisteredUsers();
+                user = registeredUsers[email];
+            }
+            
+            if (user && user.password === password) {
+                // Store user info in sessionStorage
+                sessionStorage.setItem('currentUser', JSON.stringify({
+                    email: email,
+                    role: user.role,
+                    name: user.name
+                }));
+                
+                showAlert(`Welcome back, ${user.name}! Redirecting...`, 'success');
+                
+                // Redirect based on role
+                setTimeout(() => {
+                    switch(user.role) {
+                        case 'teacher':
+                            window.location.href = 'teacher.html';
+                            break;
+                        case 'parent':
+                            window.location.href = 'parent.html';
+                            break;
+                        case 'admin':
+                            window.location.href = 'admin.html';
+                            break;
+                        default:
+                            showAlert('Invalid user role', 'danger');
+                    }
+                }, 1000);
+                
+            } else {
+                showAlert(apiResult.message || 'Invalid email or password. Please try again.', 'danger');
+            }
+        }
+        
+    } catch (error) {
+        console.error('Login error:', error);
+        showAlert('Login failed. Please try again.', 'danger');
+    } finally {
         hideLoadingState(submitBtn);
-        
-        // For now, just show success message
-        showAlert('Sign in successful! Redirecting...', 'success');
-        
-        // In a real app, you would redirect to dashboard
-        console.log('Sign In:', { email, password });
-        
         // Reset form
         e.target.reset();
-    }, 1500);
+    }
 }
 
 // Sign Up Handler
-function handleSignUp(e) {
+async function handleSignUp(e) {
     e.preventDefault();
     
     const name = document.getElementById('signUpName').value;
@@ -70,19 +205,60 @@ function handleSignUp(e) {
     // Show loading state
     showLoadingState(submitBtn);
     
-    // Simulate API call (replace with actual registration)
-    setTimeout(() => {
+    try {
+        // Try file-based API registration first
+        const apiResult = await apiRequest('api.php', {
+            action: 'register',
+            name: name,
+            email: email,
+            password: password,
+            userType: userType
+        });
+        
+        if (apiResult.success) {
+            showAlert(`Welcome to Class Roots, ${name}! Your account has been created successfully. You can now sign in.`, 'success');
+            
+            // Reset form
+            e.target.reset();
+            
+            // Auto-fill the sign-in form
+            document.getElementById('signInEmail').value = email;
+            
+        } else {
+            // Fallback to local registration if API fails
+            console.log('API failed, trying local registration...');
+            
+            // Check if user already exists
+            const registeredUsers = getRegisteredUsers();
+            if (registeredUsers[email] || LOGIN_CREDENTIALS[email]) {
+                showAlert('An account with this email already exists. Please use a different email or sign in.', 'danger');
+                return;
+            }
+            
+            try {
+                const newUser = registerUser(name, email, password, userType);
+                
+                // Show success message
+                showAlert(`Welcome to Class Roots, ${name}! Your account has been created successfully. You can now sign in.`, 'success');
+                
+                // Reset form
+                e.target.reset();
+                
+                // Auto-fill the sign-in form
+                document.getElementById('signInEmail').value = email;
+                
+            } catch (error) {
+                showAlert('There was an error creating your account. Please try again.', 'danger');
+                console.error('Registration error:', error);
+            }
+        }
+        
+    } catch (error) {
+        console.error('Registration error:', error);
+        showAlert('Registration failed. Please try again.', 'danger');
+    } finally {
         hideLoadingState(submitBtn);
-        
-        // For now, just show success message
-        showAlert(`Welcome to Class Roots, ${name}! Please check your email to verify your account.`, 'success');
-        
-        // In a real app, you would handle the registration
-        console.log('Sign Up:', { name, email, password, userType });
-        
-        // Reset form
-        e.target.reset();
-    }, 2000);
+    }
 }
 
 // Password validation

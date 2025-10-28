@@ -843,6 +843,7 @@ function switchTab(tabName) {
       break;
     case 'parent-communication':
       loadParentCommunication();
+      loadTeacherMessages(); // Load messages from parents
       break;
     case 'announcements':
       loadAnnouncements();
@@ -1907,6 +1908,160 @@ function showAlert(message, type = 'info') {
       alertDiv.remove();
     }
   }, 5000);
+}
+
+// MESSAGING FUNCTIONS
+
+// Load messages for teachers
+async function loadTeacherMessages() {
+  const messagesContainer = document.getElementById('message-history-content');
+  if (!messagesContainer) return;
+
+  // Get current user info from session storage
+  const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+  
+  if (!currentUser.id) {
+    messagesContainer.innerHTML = '<div class="text-center text-muted">Please log in to view messages.</div>';
+    return;
+  }
+
+  try {
+    // Fetch messages from API
+    const response = await fetch('api.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'get_messages',
+        user_role: 'teacher',
+        user_id: currentUser.id
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success && result.messages) {
+      // Display messages
+      if (result.messages.length === 0) {
+        messagesContainer.innerHTML = `
+          <div class="empty-state text-center">
+            <i class="bi bi-chat-dots fs-1 text-muted"></i>
+            <h5 class="mt-3">No messages yet</h5>
+            <p class="text-muted">Messages from parents will appear here.</p>
+          </div>
+        `;
+      } else {
+        messagesContainer.innerHTML = '';
+        result.messages.forEach(message => {
+          const messageCard = createTeacherMessageCard(message);
+          messagesContainer.appendChild(messageCard);
+        });
+      }
+    } else {
+      messagesContainer.innerHTML = '<div class="text-center text-muted">Failed to load messages.</div>';
+    }
+  } catch (error) {
+    console.error('Error loading messages:', error);
+    messagesContainer.innerHTML = '<div class="text-center text-muted">Error loading messages.</div>';
+  }
+}
+
+// Create message card for teacher view
+function createTeacherMessageCard(message) {
+  const card = document.createElement('div');
+  card.className = `message-card card mb-3 ${message.read ? 'message-read' : 'message-unread'}`;
+  
+  const priorityBadge = message.priority === 'high' ? 
+    '<span class="badge bg-danger me-2">High Priority</span>' : 
+    message.priority === 'medium' ? 
+    '<span class="badge bg-warning me-2">Medium Priority</span>' : 
+    '<span class="badge bg-secondary me-2">Low Priority</span>';
+
+  const unreadBadge = !message.read ? 
+    '<span class="badge bg-primary">New</span>' : '';
+
+  const readStatus = message.read ? 'Read' : 'Unread';
+  const readClass = message.read ? 'text-muted' : 'text-primary fw-bold';
+
+  card.innerHTML = `
+    <div class="card-body">
+      <div class="d-flex justify-content-between align-items-start mb-2">
+        <h6 class="card-title mb-0">${message.subject}</h6>
+        <div>
+          ${priorityBadge}
+          ${unreadBadge}
+        </div>
+      </div>
+      <p class="card-text text-muted mb-2">
+        <strong>From:</strong> ${message.sender_name}<br>
+        <strong>Date:</strong> ${formatMessageDate(message.timestamp)}
+      </p>
+      <p class="card-text">${message.message}</p>
+      <div class="d-flex justify-content-between align-items-center">
+        <small class="${readClass}">${readStatus}</small>
+        <div>
+          ${!message.read ? `
+            <button class="btn btn-sm btn-outline-success me-1" onclick="markMessageAsRead('${message.id}')">
+              <i class="bi bi-check"></i> Mark Read
+            </button>
+          ` : ''}
+          <button class="btn btn-sm btn-outline-primary" onclick="replyToParentMessage('${message.id}', '${message.sender_name}')">
+            <i class="bi bi-reply"></i> Reply
+          </button>
+        </div>
+      </div>
+    </div>
+  `;
+
+  return card;
+}
+
+// Mark message as read
+async function markMessageAsRead(messageId) {
+  try {
+    const response = await fetch('api.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'mark_read',
+        message_id: messageId
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      showAlert('Message marked as read', 'success');
+      // Reload messages to update UI
+      loadTeacherMessages();
+    } else {
+      showAlert('Failed to mark message as read', 'danger');
+    }
+  } catch (error) {
+    console.error('Error marking message as read:', error);
+    showAlert('Failed to mark message as read', 'danger');
+  }
+}
+
+// Reply to parent message
+function replyToParentMessage(messageId, parentName) {
+  showAlert(`Replying to message from ${parentName}`, 'info');
+  // This would open a reply modal in a real implementation
+}
+
+// Format message date
+function formatMessageDate(timestamp) {
+  const date = new Date(timestamp);
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
 }
 
 // Grading Center Functions
