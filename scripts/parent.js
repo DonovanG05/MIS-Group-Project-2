@@ -621,16 +621,78 @@ function createDocumentCard(document) {
   return col;
 }
 
-function loadMessages() {
+async function loadMessages() {
   const messagesList = document.getElementById('messages-list');
   if (!messagesList) return;
 
   messagesList.innerHTML = '';
 
-  parentData.messages.forEach(message => {
-    const messageCard = createMessageCard(message);
-    messagesList.appendChild(messageCard);
-  });
+  // Get current user info from session storage
+  const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+  
+  if (!currentUser.id) {
+    messagesList.innerHTML = '<div class="text-center text-muted">Please log in to view messages.</div>';
+    return;
+  }
+
+  try {
+    // Fetch messages from API
+    const response = await fetch('api.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'get_messages',
+        user_role: 'parent',
+        user_id: currentUser.id
+      })
+    });
+
+    const result = await response.json();
+
+    if (result.success && result.messages) {
+      // Update local data
+      parentData.messages = result.messages.map(msg => ({
+        id: msg.id,
+        from: msg.sender_name,
+        subject: msg.subject,
+        message: msg.message,
+        date: msg.timestamp.split(' ')[0], // Extract date part
+        read: msg.read,
+        priority: msg.priority
+      }));
+
+      // Display messages
+      if (parentData.messages.length === 0) {
+        messagesList.innerHTML = `
+          <div class="empty-state text-center">
+            <i class="bi bi-chat-dots fs-1 text-muted"></i>
+            <h5 class="mt-3">No messages yet</h5>
+            <p class="text-muted">Send a message to your child's teacher to get started.</p>
+          </div>
+        `;
+      } else {
+        parentData.messages.forEach(message => {
+          const messageCard = createMessageCard(message);
+          messagesList.appendChild(messageCard);
+        });
+      }
+    } else {
+      // Fallback to local data
+      parentData.messages.forEach(message => {
+        const messageCard = createMessageCard(message);
+        messagesList.appendChild(messageCard);
+      });
+    }
+  } catch (error) {
+    console.error('Error loading messages:', error);
+    // Fallback to local data
+    parentData.messages.forEach(message => {
+      const messageCard = createMessageCard(message);
+      messagesList.appendChild(messageCard);
+    });
+  }
 }
 
 function createMessageCard(message) {
@@ -713,7 +775,7 @@ function uploadDocument() {
   showAlert('Document uploaded successfully!', 'success');
 }
 
-function sendMessageToTeacher() {
+async function sendMessageToTeacher() {
   const teacher = document.getElementById('teacherSelect').value;
   const subject = document.getElementById('messageSubject').value;
   const priority = document.getElementById('messagePriority').value;
@@ -724,29 +786,66 @@ function sendMessageToTeacher() {
     return;
   }
 
-  // Create new message
-  const newMessage = {
-    id: parentData.messages.length + 1,
-    from: parentData.parent.firstName + ' ' + parentData.parent.lastName,
-    subject: subject,
-    message: content,
-    date: new Date().toISOString().split('T')[0],
-    read: false,
-    priority: priority
-  };
+  // Get current user info from session storage
+  const currentUser = JSON.parse(sessionStorage.getItem('currentUser') || '{}');
+  
+  if (!currentUser.id) {
+    showAlert('User session expired. Please log in again.', 'danger');
+    return;
+  }
 
-  parentData.messages.push(newMessage);
-  loadMessages();
-  updateOverviewStats();
+  try {
+    // Send message via API
+    const response = await fetch('api.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'send_message',
+        sender_id: currentUser.id,
+        sender_role: 'parent',
+        sender_name: currentUser.name,
+        recipient_role: 'teacher',
+        subject: subject,
+        message: content,
+        priority: priority
+      })
+    });
 
-  // Close modal
-  const modal = bootstrap.Modal.getInstance(document.getElementById('contactTeacherModal'));
-  modal.hide();
+    const result = await response.json();
 
-  // Reset form
-  document.getElementById('contactTeacherForm').reset();
+    if (result.success) {
+      // Update local data for immediate UI update
+      const newMessage = {
+        id: parentData.messages.length + 1,
+        from: currentUser.name,
+        subject: subject,
+        message: content,
+        date: new Date().toISOString().split('T')[0],
+        read: false,
+        priority: priority
+      };
 
-  showAlert('Message sent successfully!', 'success');
+      parentData.messages.push(newMessage);
+      loadMessages();
+      updateOverviewStats();
+
+      // Close modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById('contactTeacherModal'));
+      modal.hide();
+
+      // Reset form
+      document.getElementById('contactTeacherForm').reset();
+
+      showAlert('Message sent successfully!', 'success');
+    } else {
+      showAlert(result.message || 'Failed to send message', 'danger');
+    }
+  } catch (error) {
+    console.error('Error sending message:', error);
+    showAlert('Failed to send message. Please try again.', 'danger');
+  }
 }
 
 function reportAbsence() {
